@@ -1,3 +1,19 @@
+/*
+* Copyright [yyyy] [name of copyright owner]
+* 
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* 
+*     http://www.apache.org/licenses/LICENSE-2.0
+* 
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+ */
+
 #include <iostream>
 #include <string.h>
 #include <exception>
@@ -23,8 +39,10 @@ typedef independent_bits_engine<mt19937, 256, cpp_int> generator_type;
 generator_type gen(time(NULL));
 
 string* blank = new string("");
+string buffer = "";
 string title = "Xombies and Nambaz";
 bool showstat = true;
+string name = "Abigail";
 
 
 // class
@@ -72,10 +90,26 @@ static void show_usage(string name)
         << std::endl;
 }
 
+void BEL()
+{
+    beep(1000, 100);
+}
+
+void DET()
+{
+    beep(500, 55);
+}
+
 
 // main boi
 int main(int argc, char* argv[]){
-    beep(500, 500);
+
+    int zombiecount = 0;
+    string attack[6] = { "SWOSH", "POW", "PEW", "CLANG", "CLASH", "BANG" };
+    string choice = "";
+
+
+    BEL();
     signal(SIGABRT, keyboardinterruptsignal);
     signal(SIGINT, keyboardinterruptsignal);
     signal(SIGILL, programtermsignal);
@@ -117,6 +151,22 @@ int main(int argc, char* argv[]){
     if(shouldiexit == "exit" || shouldiexit == "EXIT"){
         return 0;
     }
+
+    cout << "What is your name?" << endl;
+    getline(cin, name);
+
+    cout<< "Ok " << name << ", Howmany zombies do you want to fight?" << endl;
+
+    while(true){
+        cin >> buffer;
+        try{
+            zombiecount = stoi(buffer);
+        }
+        catch(invalid_argument eia){
+            cout 
+        }
+    }
+
     delete blank;
 
     return 0;
