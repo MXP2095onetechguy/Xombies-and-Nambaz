@@ -16,6 +16,8 @@
 
 /* install boost by dropping the boost library onto the include folder in the c++ include folder of g++ */
 
+// some of these code is original, while some are transplanted from my msvc code
+
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -34,6 +36,8 @@
 #include <csignal>
 #include <filesystem>
 #include <ctime> 
+#include <sstream>
+#include <vector>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/generator_iterator.hpp>
 #include <boost/random.hpp>
@@ -84,6 +88,10 @@ string name = defname;
 int maxtries = 8;
 string desktop = getdesktop();
 string filename = "Final-Stats.txt";
+bool cheatmode = false;
+
+promise<void> signal_exit_musix_thread; //create promise object
+std::future<void> futura = signal_exit_musix_thread.get_future(); // create future objects
 
 
 // class
@@ -122,6 +130,11 @@ void programtermsignal(int signum) {
     exit(signum);
 }
 
+void termexitsignal(int signum)
+{
+    cout << endl << RED "Either the program hung up or the controlling terminal got terminated";
+}
+
 static void show_usage(string name)
 {
     std::cout << "Usage: " << name << " <option(s)> SOURCES\n"
@@ -152,6 +165,44 @@ void BEL()
 void DET()
 {
     beep(500, 55);
+}
+
+// this is transplanted
+int music(std::future<void> future)
+{
+    // not the best way to generate music, but it works although it is hacky and tacky
+    // this is blocking, multithreading works as non blocking
+    while (/*musix == true*/ future.wait_for(chrono::milliseconds(1)) == future_status::timeout)
+    {
+        beep(500, 500);
+        beep(575, 250);
+        beep(525, 250);
+        /*
+        if (musix == false)
+        {
+            return 0;
+        }
+        */
+        beep(500, 750);
+        beep(400, 750);
+        beep(500, 500);
+        sleep_for(milliseconds(1000));
+        cout << '\a';
+        /*
+        if (musix == false)
+        {
+            return 0;
+        }
+        */
+        sleep_for(milliseconds(1500));
+        /*
+        if (musix == false)
+        {
+            return 0;
+        }
+        */
+    }
+    return 0;
 }
 
 
@@ -217,6 +268,8 @@ int main(int argc, char* argv[]){
         }
     }
 
+    thread musixThread(music, std::move(futura));
+
 
 #ifdef _WIN32
     system("color 02");
@@ -236,6 +289,16 @@ int main(int argc, char* argv[]){
     {
         name = defname;
     }
+    else if(name == defname)
+    {
+        name = defname;
+    }
+
+    if(name == "Andry Lie" || name == "andry lie" || name == "Andry lie" || name == "andry Lie")
+    {
+        cheatmode = true;
+        cout << "Cheat mode activated" << endl;
+    }
 
     cout<< "Ok " << name << ", How many zombies do you want to fight?" << endl;
 
@@ -246,6 +309,10 @@ int main(int argc, char* argv[]){
                 throw ASRTBE;
             }
             zombiecount = stoi(buffer);
+            if(cheatmode == true)
+            {
+                zombiecount += 100;
+            }
             BEL();
             break;
         }
@@ -274,9 +341,10 @@ int main(int argc, char* argv[]){
     while(DED == 0)
     {
         mynumber = randint(min, max);
-        cout << "My number is between " << min << " and " << max << endl << "You have " << tries << " tries" << endl;
+        cout << "My number is between " << min << " and " << max << endl;
         while(tries > 0)
         {
+            cout << "You have " << tries << " tries" << endl;
             if (tries < 0)
             {
                 DED = 1;
@@ -405,7 +473,7 @@ int main(int argc, char* argv[]){
                 sleep_for(seconds(1));
             }
 
-            if (pskill < zskill)
+            if (pskill < zskill && cheatmode == false)
             {
                 DED = 2;
             }
@@ -424,15 +492,19 @@ int main(int argc, char* argv[]){
                     score += 2;
                     zombiekilled++;
                 }
-                else if (pskill - zskill > 0) {
+                else if ((pskill - zskill) > 0) {
                     cout << "You killed the zombie!" << endl;
                     BEL();
                     pskill = pskill * zombiecount;
                     score = score * zombiecount;
                     zombiekilled++;
                 }
-                else {
+                else if(cheatmode == false && (pskill - zskill) > 0) {
                     cout << "You killed the zombie, but suffered injuries, no skill level for you then." << endl;
+                    BEL();
+                }
+                else{
+                    cout << "You killed the zombie, What. No skill level for you then." << endl;
                     BEL();
                 }
             }
@@ -452,7 +524,7 @@ int main(int argc, char* argv[]){
 
         while (true)
         {
-            cout << "Here is your stats so far,  score: " << score << ", zombies killed : " << zombiekilled << ", zombie count: " << zombiecount << "." << endl;
+            cout << "Here is your stats so far,  score: " << score << ", zombie army killed : " << zombiekilled << ", zombie count: " << zombiecount << "." << endl;
             cout << "end for ending the game. " << endl;
             cout << "fight for fighting again. " << endl;
             cin >> choice;
@@ -486,6 +558,9 @@ int main(int argc, char* argv[]){
             break;
         }
     }
+
+    signal_exit_musix_thread.set_value(); //set value into promise
+    musixThread.join();
 
     while (true)
     {
@@ -539,11 +614,11 @@ int main(int argc, char* argv[]){
 
             if (DED == 2)
             {
-                endstatus = "Killed by zombies";
+                endstatus = "DEDed by zombies.";
             }
             else if (DED == 1)
             {
-                endstatus = "Ded for running out of tries when guessing. WHAT!";
+                endstatus = "DEDed for running out of tries when guessing. WHAT!";
             }
             else if (DED == 0)
             {
@@ -565,6 +640,7 @@ int main(int argc, char* argv[]){
             FinalFile << "=========================================" << endl;
             FinalFile << "Player Name: " << name << endl;
             FinalFile << "Status: " << endstatus << endl;
+            FinalFile << "In cheat mode: " << cheatmode << endl;
             FinalFile << "Final score: " << score << endl;
             FinalFile << "Final amout of zombies killed: " << zombiekilled << endl;
             FinalFile << "Final skill level of player: " << pskill << endl;

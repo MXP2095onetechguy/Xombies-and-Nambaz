@@ -1,15 +1,20 @@
+# make variables
+SHELL=/bin/bash
+# file variables
 fin-file = "./bin/Gam.exe"
 fin-winfile = "./bin/Win-Gam.exe"
 fin-nixfile = "./bin/Gam.elf.o"
 srcpp = "Gam.cpp"
-ocpp = "object.o"
+ocpp = "Gam.o"
 icnsobj = "icon.o"
 icnsrc = "resource.rc"
 
 
 
 
+
 all:setup-posix build
+
 
 build: build-fin-noicns
 
@@ -34,16 +39,16 @@ test-makevar:
 # build-unix: g++ $(srcpp) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-nixfile)
 
 build-fin:
-	g++ $(srcpp) $(icnsobj) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-winfile)
+	g++ $(srcpp) $(icnsobj) -fdiagnostics-color -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-winfile)
 
 build-fin-noicns:
-	g++ $(srcpp) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-file)
+	g++ $(srcpp) -fdiagnostics-color -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-file)
 
 build-compile:
-	g++ -c -Wall -static -g -static-libgcc -static-libstdc++ $(srcpp) -o $(ocpp)
+	g++ -c -Wall -fdiagnostics-color -static -g -static-libgcc -static-libstdc++ $(srcpp) -o $(ocpp)
 
 build-link:
-	g++ -static -Wall -g -static-libgcc -static-libstdc++ $(ocpp) -o $(fin-file)
+	g++ -static -fdiagnostics-color -Wall -g -static-libgcc -static-libstdc++ $(ocpp) -o $(fin-file)
 
 build-icns-win:
 	windres -i $(icnsrc) -o $(icnsobj)
@@ -62,6 +67,13 @@ setup-win:
 
 makebin: 
 	mkdir bin
+
+rm: clean
+
+clean:
+	clear
+	rm -rf bin
+	rm *.o
 
 install: install-usix
 
