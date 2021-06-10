@@ -17,7 +17,13 @@
 /* install boost by dropping the boost library onto the include folder in the c++ include folder of g++ */
 
 
+#define _CRT_SECURE_NO_WARNINGS
+
+/* Esentiall, this is console IO, must have in c++ or c programs. */
 #include <iostream>
+#include <stdio.h>
+/* End of console IO. */
+
 #include <string.h>
 #include <exception>
 #include <thread>
@@ -26,6 +32,8 @@
 #include <future>
 #include <vector>
 #include <csignal>
+#include <filesystem>
+#include <ctime> 
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/generator_iterator.hpp>
 #include <boost/random.hpp>
@@ -35,6 +43,7 @@
 #include "doot.h"
 #include "term.hpp"
 #include "color.hpp"
+#include "SomeFunc.hpp"
 
 #define GRN "\e[0;32m"
 #define RED "\e[0;31m"
@@ -48,6 +57,24 @@ using namespace boost::random;
 typedef independent_bits_engine<mt19937, 256, cpp_int> generator_type;
 generator_type gen(time(NULL));
 
+string getdesktop()
+{
+    string p = "";
+    string pd = "";
+#ifdef _WIN32
+    p = getenv("USERPROFILE");
+    pd = p + "\\desktop";
+    return pd;
+#elif defined(unix)
+    p = getenv("HOME");
+    pd = p + "/Desktop/example.txt";
+    return pd;
+#else
+    return "error, unknown os";
+#endif
+
+}
+
 string* blank = new string("");
 string buffer = "";
 string title = "Xombies and Nambaz";
@@ -55,6 +82,8 @@ bool showstat = true;
 string defname = "Abigail";
 string name = defname;
 int maxtries = 8;
+string desktop = getdesktop();
+string filename = "Final-Stats.txt";
 
 
 // class
@@ -99,8 +128,21 @@ static void show_usage(string name)
         << "Options:\n"
         << "\t-h,--help\t\tShow this help message\n"
         << "\t-ns, --NOSTAT\t\tNo stat writting prompt\n"
-        << std::endl;
+        << "\t-fn, --FILENAME\t\tThe name of the file\n"
+        << endl;
 }
+
+string whatisthetimeanddate()
+{
+
+    auto givemetime = system_clock::to_time_t(system_clock::now());
+
+
+    string time = ctime(&givemetime);
+
+    return time;
+}
+
 
 void BEL()
 {
@@ -110,24 +152,6 @@ void BEL()
 void DET()
 {
     beep(500, 55);
-}
-
-string getdesktop()
-{
-    string p = "";
-    string pd = "";
-#ifdef _WIN32
-    p = getenv("USERPROFILE");
-    pd = p + "\\desktop";
-    return pd;
-#elif defined(unix)
-    p = getenv("HOME");
-    pd = p + "/Desktop/example.txt";
-    return pd;
-#else
-    return "error, unknown os";
-#endif
-
 }
 
 
@@ -148,7 +172,6 @@ int main(int argc, char* argv[]){
     string attack[6] = { "SWOSH", "POW", "PEW", "CLANG", "CLASH", "BANG" };
     int attacklen = sizeof(attack) / sizeof(attack[0]);
     string choice = "";
-    string desktop = getdesktop();
     bool quit = false;
 
 
@@ -158,9 +181,6 @@ int main(int argc, char* argv[]){
     signal(SIGILL, programtermsignal);
     signal(SIGTERM, programtermsignal);
 
-#ifdef _WIN32
-    system("color 02");
-#endif
 
     if (argc < 2)
     {
@@ -179,6 +199,18 @@ int main(int argc, char* argv[]){
             {
                 showstat = false;
             }
+            else if((arg == "-fn") || (arg == "--FILENAME"))
+            {
+                string clifilename = argv[(i + 1)];
+                if(clifilename.empty())
+                {
+                    cout << RED "Filename expected ar -fn or --FILENAME";
+                    return 1;
+                }
+                else{
+                    filename = clifilename;
+                }
+            }
             else {
                 sources.push_back(argv[i]);
             }
@@ -186,6 +218,9 @@ int main(int argc, char* argv[]){
     }
 
 
+#ifdef _WIN32
+    system("color 02");
+#endif
 
     cout << "\033]2;" << title << "\007" << GRN "Welcome to " << title << endl << "Press enter to get started. Type [EXIT or exit] to exit," << endl << "maybe do a keyboard interrupt anytime you want to also exit" << endl;
     string shouldiexit = "";
@@ -452,9 +487,115 @@ int main(int argc, char* argv[]){
         }
     }
 
+    while (true)
+    {
+        if (!showstat)
+        {
+            break;
+        }
+        string confirm = "";
 
-    
+        cout << "Would you like your Final Stats be written to a file?" << endl << "Yes for writing, No for not writting. ";
+        cin >> confirm;
+
+        if (confirm == "yes")
+        {
+            std::ifstream ifile(filename);
+
+            if (ifile)
+            {
+                cout << endl << "Are you sure, you want to do this, the same file, " << filename << " already exist, This action will overwrite the file.  Yes for confirm overwritting, No or other for cancel" << endl;
+                string res = "";
+                cin >> res;
+                if (res == "yes")
+                {
+
+                }
+                else {
+                    cout << "OK then" << endl;
+                    break;
+                }
+            }
+            else {
+                cout << endl << "Seems safe, I don't see any file named " << filename << ", But do you want to stay safe than sorry? Yes for sorry, but proud, or (either you choose no or other) for the safe.";
+                string res = "";
+                cin >> res;
+                if (res == "yes")
+                {
+
+                }
+                else {
+                    cout << "OK then" << endl;
+                    break;
+                }
+            }
+
+
+            std::ofstream FinalFile;
+            FinalFile.open(filename, std::ofstream::out | std::ofstream::trunc);
+            string endstatus = "";
+
+            cout << endl << "Writting to file, please don't close the game." << endl;
+
+            if (DED == 2)
+            {
+                endstatus = "Killed by zombies";
+            }
+            else if (DED == 1)
+            {
+                endstatus = "Ded for running out of tries when guessing. WHAT!";
+            }
+            else if (DED == 0)
+            {
+                endstatus = "Alive and Fine";
+            }
+            else {
+                endstatus = "Unknown";
+            }
+
+            if (FinalFile.is_open() != 1)
+            {
+                // cout << FinalFile.is_open();
+                cout << "Unknown file openning error occured";
+                break;
+            }
+
+
+            FinalFile << "Final Stats played at " << whatisthetimeanddate() << endl;
+            FinalFile << "=========================================" << endl;
+            FinalFile << "Player Name: " << name << endl;
+            FinalFile << "Status: " << endstatus << endl;
+            FinalFile << "Final score: " << score << endl;
+            FinalFile << "Final amout of zombies killed: " << zombiekilled << endl;
+            FinalFile << "Final skill level of player: " << pskill << endl;
+            FinalFile << "Final skill level of zombie: " << zskill << endl;
+            FinalFile << "Final zombie count: " << zombiecount << endl;
+
+            cout << "File writting is done";
+
+
+            FinalFile.close();
+            break;
+        }
+        else if (confirm == "no")
+        {
+            cout << endl << "No file writting is done";
+            break;
+        }
+        else {
+            cout << endl << "Say what?" << endl;
+        }
+
+
+    }
+
+
+    cout << endl << "You can safely exit the game. ";
+    BEL();
+    cin >> *blank;
+    BEL();
     delete blank;
+    BEL();
 
     return 0;
 }
