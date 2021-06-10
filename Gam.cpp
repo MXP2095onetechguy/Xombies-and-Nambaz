@@ -33,6 +33,11 @@
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "doot.h"
+#include "term.hpp"
+#include "color.hpp"
+
+#define GRN "\e[0;32m"
+#define RED "\e[0;31m"
 
 using namespace std;
 using namespace std::this_thread;
@@ -74,7 +79,7 @@ int randint(int min, int max) { // new randomizer
 }
 
 void keyboardinterruptsignal(int signum) {
-    cout << endl << "Keyboard interrupt dectected, exiting with code " << signum << ".";
+    cout << endl << RED "Keyboard interrupt dectected, exiting with code " << signum << ".";
 
     // cleanup and close up stuff here  
     // terminate program  
@@ -83,7 +88,7 @@ void keyboardinterruptsignal(int signum) {
 }
 
 void programtermsignal(int signum) {
-    cout << endl << "Program either did an illegal instruction or Another program sent a termination request to this program, exiting with code " << signum << ".";
+    cout << endl << RED "Program either did an illegal instruction or Another program sent a termination request to this program, exiting with code " << signum << ".";
 
     exit(signum);
 }
@@ -182,7 +187,7 @@ int main(int argc, char* argv[]){
 
 
 
-    cout << "\033]2;" << title << "\007" << "Welcome to " << title << endl << "Press enter to get started. Type [EXIT or exit] to exit," << endl << "maybe do a keyboard interrupt anytime you want to also exit" << endl;
+    cout << "\033]2;" << title << "\007" << GRN "Welcome to " << title << endl << "Press enter to get started. Type [EXIT or exit] to exit," << endl << "maybe do a keyboard interrupt anytime you want to also exit" << endl;
     string shouldiexit = "";
     getline(cin, shouldiexit);
     shouldiexit = *blank;
@@ -210,7 +215,7 @@ int main(int argc, char* argv[]){
             break;
         }
         catch(invalid_argument eia){
-            cout << "Give me only numbers";
+            cout << "Give me only numbers" << endl;
             BEL();
         }
         catch(AbigailSaphiroRuntimeThiccBreastException artbe){
@@ -227,14 +232,14 @@ int main(int argc, char* argv[]){
     cin >> *blank;
     BEL();
 
-    cout << "Fight Fight Fight " << name << "!";
+    cout << "Fight Fight Fight " << name << "!" << endl << endl;
     sleep_for(seconds(2));
     BEL();
 
     while(DED == 0)
     {
         mynumber = randint(min, max);
-        cout << "My number is between " << min << " and " << max << endl << "You have " << tries << "tries";
+        cout << "My number is between " << min << " and " << max << endl << "You have " << tries << " tries" << endl;
         while(tries > 0)
         {
             if (tries < 0)
@@ -256,20 +261,20 @@ int main(int argc, char* argv[]){
                 else {
                     if (myguess < mynumber)
                     {
-                        cout << "Too low.";
+                        cout << "Too low." << endl;
                         BEL();
                         zskill += 1;
                         pskill -= 2;
                     }
                     else if (myguess > mynumber)
                     {
-                        cout << "Too high.";
+                        cout << "Too high." << endl;
                         BEL();
                         zskill += 2;
                         pskill / randint(1, 2);
                     }
                     else {
-                        cout << "Good.";
+                        cout << "Good." << endl;
                         BEL();
                         pskill = pskill * randint(2, 4);
                         break;
@@ -320,6 +325,8 @@ int main(int argc, char* argv[]){
 
         sleep_for(seconds(2));
 
+        cout << endl;
+
         int bonus = randint(1, 50);
         if(bonus == 1)
         {
@@ -353,45 +360,53 @@ int main(int argc, char* argv[]){
 
         cout << endl;
 
-        for (int i = 0; i < 5; i++) {
-            string effect = attack[randint(0, (attacklen - 1))];
-            cout << "Fighting with " << effect << "..." << endl;
-            DET();
-            sleep_for(seconds(1));
-        }
-
-        if (pskill < zskill)
+        int zheartattack = randint(1, 45);
+        if(zheartattack != 1)
         {
-            DED = 2;
-        }
-        else {
-            if ((pskill - zskill) > 7) {
-                cout << "Zombie is wasted." << endl;
-                BEL();
-                pskill++;
-                score++;
-                zombiekilled++;
-            }
-            else if ((pskill - zskill) > 5) {
-                cout << "That must have hurt!" << endl;
-                BEL();
-                pskill += 2;
-                score += 2;
-                zombiekilled++;
+            for (int i = 0; i < 5; i++) {
+                string effect = attack[randint(0, (attacklen - 1))];
+                cout << "Fighting with " << effect << "..." << endl;
+                DET();
+                sleep_for(seconds(1));
             }
 
-            else if (pskill - zskill > 0) {
-                cout << "You killed the zombie!" << endl;
-                BEL();
-                pskill = pskill * zombiecount;
-                score = score * zombiecount;
-                zombiekilled++;
+            if (pskill < zskill)
+            {
+                DED = 2;
             }
             else {
-                cout << "You killed the zombie, but suffered injuries." << endl;
-                BEL();
+                if ((pskill - zskill) > 7) {
+                    cout << "Zombie is wasted." << endl;
+                    BEL();
+                    pskill++;
+                    score++;
+                    zombiekilled++;
+                }
+                else if ((pskill - zskill) > 5) {
+                    cout << "That must have hurt!" << endl;
+                    BEL();
+                    pskill += 2;
+                    score += 2;
+                    zombiekilled++;
+                }
+                else if (pskill - zskill > 0) {
+                    cout << "You killed the zombie!" << endl;
+                    BEL();
+                    pskill = pskill * zombiecount;
+                    score = score * zombiecount;
+                    zombiekilled++;
+                }
+                else {
+                    cout << "You killed the zombie, but suffered injuries, no skill level for you then." << endl;
+                    BEL();
+                }
             }
         }
+        else{
+            cout << "The zombie just died of a sudden heart attack, stealing your skill level." << endl;
+        }
+
+
 
         if (DED != 0)
         {
@@ -404,7 +419,7 @@ int main(int argc, char* argv[]){
         {
             cout << "Here is your stats so far,  score: " << score << ", zombies killed : " << zombiekilled << ", zombie count: " << zombiecount << "." << endl;
             cout << "end for ending the game. " << endl;
-            cout << "fight for fighting again. ";
+            cout << "fight for fighting again. " << endl;
             cin >> choice;
             if (choice == "end")
             {

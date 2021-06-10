@@ -28,3 +28,8 @@ setup-win:
 
 makebin: 
 	mkdir bin
+
+install: install-usix
+
+install-usix: 
+	echo "not ready"
