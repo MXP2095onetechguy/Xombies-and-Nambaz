@@ -32,6 +32,8 @@
 #include "doot.h"
 
 using namespace std;
+using namespace std::this_thread;
+using namespace std::chrono;
 using namespace boost::multiprecision;
 using namespace boost::random;
 
@@ -155,18 +157,40 @@ int main(int argc, char* argv[]){
     cout << "What is your name?" << endl;
     getline(cin, name);
 
-    cout<< "Ok " << name << ", Howmany zombies do you want to fight?" << endl;
+    cout<< "Ok " << name << ", How many zombies do you want to fight?" << endl;
 
     while(true){
         cin >> buffer;
         try{
+            if (buffer == "Abigail") {
+                throw ASRTBE;
+            }
             zombiecount = stoi(buffer);
+            BEL();
+            break;
         }
         catch(invalid_argument eia){
-            cout 
+            cout << "Give me only numbers";
+            BEL();
+        }
+        catch(AbigailSaphiroRuntimeThiccBreastException artbe){
+            BEL();
+            cout << artbe.what();
+            throw ASRTBE;
+            return 1;
+        }
+        catch(...){
+
         }
     }
+    cout << endl << "You fight by guessing numbers to train yourself and increase your skill!" << endl << "If you guess corectly and you killed the zombie, you win and get to live another day and fight again with another zombie!" << endl << "You lose and you are DED, no more fighting." << endl << "You lose by running out of tries in the guessing game or losing to a zombie with a higher skill level." << endl << "You win by killinng the zombie and you can increase the change if winning by guessing correctly with as little mistake as possible." << endl << "Your score and skill is multiplied depending on how much zombies you want to fight" << endl;
+    cin >> *blank;
+    BEL();
 
+    cout << "Fight Fight Fight " << name << "!";
+    sleep_for(seconds(2));
+    BEL();
+    
     delete blank;
 
     return 0;
