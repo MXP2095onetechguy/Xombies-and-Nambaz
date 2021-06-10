@@ -1,18 +1,49 @@
-all: setup-posix build
+fin-file = "./bin/Gam.exe"
+fin-winfile = "./bin/Win-Gam.exe"
+srcpp = "Gam.cpp"
+ocpp = "object.o"
+icnsobj = "icon.o"
+icnsrc = "resource.rc"
 
-build: build-fin
 
+
+
+all:setup-posix build
+
+build: build-fin-noicns
+
+build-win: build-fin
+
+test : test-makevar
+
+# start of test
+
+test-makevar:
+	echo $(fin-winfile)
+	echo $(fin-file)
+	echo $(srcpp)
+	echo $(ocpp)
+	echo $(icnsobj)
+	echo $(icnsrc)
+
+# end of test
 
 # start of build compilation set
 
 build-fin:
-	g++ Gam.cpp -static -Wall -g -static-libgcc -static-libstdc++ -o ./bin/Gam.exe
+	build-icns-win g++ $(srcpp) $(icnsobj) -o $(fin-winfile)
+
+build-fin-noicns:
+	g++ $(srcpp) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-file)
 
 build-compile:
-	g++ -c -Wall -g Gam.cpp -o Gam.o
+	g++ -c -Wall -g $(srcpp) -o $(ocpp)
 
 build-link:
-	g++ -g -o ./bin/Gam.exe Gam.o
+	g++ -g $(ocpp) -o $(fin-file)
+
+build-icns-win:
+	windres -i $(icnsrc) -o $(icnsobj)
 
 # end of build compilation set
 
