@@ -12,7 +12,10 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
- */
+*/
+
+/* install boost by dropping the boost library onto the include folder in the c++ include folder of g++ */
+
 
 #include <iostream>
 #include <string.h>
@@ -44,7 +47,9 @@ string* blank = new string("");
 string buffer = "";
 string title = "Xombies and Nambaz";
 bool showstat = true;
-string name = "Abigail";
+string defname = "Abigail";
+string name = defname;
+int maxtries = 8;
 
 
 // class
@@ -102,13 +107,44 @@ void DET()
     beep(500, 55);
 }
 
+string getdesktop()
+{
+    string p = "";
+    string pd = "";
+#ifdef _WIN32
+    p = getenv("USERPROFILE");
+    pd = p + "\\desktop";
+    return pd;
+#elif defined(unix)
+    p = getenv("HOME");
+    pd = p + "/Desktop/example.txt";
+    return pd;
+#else
+    return "error, unknown os";
+#endif
+
+}
+
 
 // main boi
 int main(int argc, char* argv[]){
 
     int zombiecount = 0;
+    int tries = maxtries;
+    int pskill = 68;
+    int zskill = randint(68, 70);
+    int mynumber;
+    int max = 20;
+    int min = 0;
+    int DED = 0;
+    int myguess = 0;
+    int zombiekilled = 0;
+    int score = 0;
     string attack[6] = { "SWOSH", "POW", "PEW", "CLANG", "CLASH", "BANG" };
+    int attacklen = sizeof(attack) / sizeof(attack[0]);
     string choice = "";
+    string desktop = getdesktop();
+    bool quit = false;
 
 
     BEL();
@@ -146,7 +182,7 @@ int main(int argc, char* argv[]){
 
 
 
-    cout << "\033]2;" << title << "\007" << "Welcome to " << title << endl << "Press enter to get started. Type [EXIT or exit] to exit," << endl << "maybe do a keyboard interrupt anytime you want to also exit";
+    cout << "\033]2;" << title << "\007" << "Welcome to " << title << endl << "Press enter to get started. Type [EXIT or exit] to exit," << endl << "maybe do a keyboard interrupt anytime you want to also exit" << endl;
     string shouldiexit = "";
     getline(cin, shouldiexit);
     shouldiexit = *blank;
@@ -156,6 +192,10 @@ int main(int argc, char* argv[]){
 
     cout << "What is your name?" << endl;
     getline(cin, name);
+    if(name.empty())
+    {
+        name = defname;
+    }
 
     cout<< "Ok " << name << ", How many zombies do you want to fight?" << endl;
 
@@ -190,6 +230,214 @@ int main(int argc, char* argv[]){
     cout << "Fight Fight Fight " << name << "!";
     sleep_for(seconds(2));
     BEL();
+
+    while(DED == 0)
+    {
+        mynumber = randint(min, max);
+        cout << "My number is between " << min << " and " << max << endl << "You have " << tries << "tries";
+        while(tries > 0)
+        {
+            if (tries < 0)
+            {
+                DED = 1;
+                break;
+            }
+            if (tries == 0) {
+                cout << "This is your last chance!" << endl;
+            }
+            cin >> buffer;
+            try {
+                myguess = stoi(buffer);
+                if (tries < 0)
+                {
+                    DED = 1;
+                    break;
+                }
+                else {
+                    if (myguess < mynumber)
+                    {
+                        cout << "Too low.";
+                        BEL();
+                        zskill += 1;
+                        pskill -= 2;
+                    }
+                    else if (myguess > mynumber)
+                    {
+                        cout << "Too high.";
+                        BEL();
+                        zskill += 2;
+                        pskill / randint(1, 2);
+                    }
+                    else {
+                        cout << "Good.";
+                        BEL();
+                        pskill = pskill * randint(2, 4);
+                        break;
+                    }
+                }
+                tries -= 1;
+            }
+            catch(AbigailSaphiroRuntimeThiccBreastException artbe)
+            {
+                throw ASRTBE;
+            }
+            catch(invalid_argument eia){
+                cout << "Give me only numbers" << endl;
+                BEL();
+            }
+            catch(exception e)
+            {
+                cout << "exception." << endl;
+            }
+            catch(...)
+            {
+                cout << "Exception dectected, input again" << endl;
+            }
+        }
+
+        if (DED != 0)
+        {
+            break;
+        }
+
+        cout << endl;
+
+        if (zskill > 10) {
+            cout << endl << "Here comes some strong boy zombie!" << endl;
+        }
+        else if (zskill > 1) {
+            cout << endl << "Here comes some zombie!" << endl;
+        }
+        else if (zskill == 1)
+        {
+            cout << endl << "You got some weak zombie!" << endl;
+        }
+        else {
+            cout << endl << "What zombie?" << endl;
+        }
+
+        BEL();
+
+        sleep_for(seconds(2));
+
+        int bonus = randint(1, 50);
+        if(bonus == 1)
+        {
+            cout << "You have a chance for bonus skill level, would you like it? 1 for yes, other for no" << endl;
+            try{
+                int answer = 0;
+                cin >> buffer;
+                answer = stoi(buffer);
+                if(answer == 1)
+                {
+                    int addition = randint(1, 5);
+                    pskill += addition;
+                    cout << "You have " << addition << " levels added to your skill level, now your skill level is at " << pskill;
+                }
+                else{
+                    cout << "alright, this is rare";
+                }
+            }
+            catch(invalid_argument eia)
+            {
+                cout << "alright, this is rare";
+            }
+            catch(exception e)
+            {
+                cout << "alright, this is rare";
+            }
+            catch(...){
+                cout << "alright, this is rare";
+            }
+        }
+
+        cout << endl;
+
+        for (int i = 0; i < 5; i++) {
+            string effect = attack[randint(0, (attacklen - 1))];
+            cout << "Fighting with " << effect << "..." << endl;
+            DET();
+            sleep_for(seconds(1));
+        }
+
+        if (pskill < zskill)
+        {
+            DED = 2;
+        }
+        else {
+            if ((pskill - zskill) > 7) {
+                cout << "Zombie is wasted." << endl;
+                BEL();
+                pskill++;
+                score++;
+                zombiekilled++;
+            }
+            else if ((pskill - zskill) > 5) {
+                cout << "That must have hurt!" << endl;
+                BEL();
+                pskill += 2;
+                score += 2;
+                zombiekilled++;
+            }
+
+            else if (pskill - zskill > 0) {
+                cout << "You killed the zombie!" << endl;
+                BEL();
+                pskill = pskill * zombiecount;
+                score = score * zombiecount;
+                zombiekilled++;
+            }
+            else {
+                cout << "You killed the zombie, but suffered injuries." << endl;
+                BEL();
+            }
+        }
+
+        if (DED != 0)
+        {
+            break;
+        }
+
+        cout << endl << "You went home, " << name << ", but do you want to fight again, or end it." << endl;
+
+        while (true)
+        {
+            cout << "Here is your stats so far,  score: " << score << ", zombies killed : " << zombiekilled << ", zombie count: " << zombiecount << "." << endl;
+            cout << "end for ending the game. " << endl;
+            cout << "fight for fighting again. ";
+            cin >> choice;
+            if (choice == "end")
+            {
+                quit = true;
+                BEL();
+                break;
+            }
+            else if (choice == "fight")
+            {
+                tries = maxtries;
+                BEL();
+                break;
+            }
+            else {
+                cout << "Say what?" << endl;
+                BEL();
+            }
+
+        }
+
+        if (DED != 0)
+        {
+            break;
+        }
+
+        if (quit == true)
+        {
+            cout << endl;
+            break;
+        }
+    }
+
+
     
     delete blank;
 
