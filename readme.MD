@@ -16,3 +16,8 @@ make
 cd bin
 Gam.exe
 '''
+
+<hr>
+story
+<hr>
+This game was originally a mix of two games and then compiled with msvc, but I decided to go with mingw.
