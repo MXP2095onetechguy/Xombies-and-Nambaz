@@ -13,8 +13,11 @@ excecute Gam.exe or ./Gam to play it.
 build steps
 `
 make
+
 cd bin
+
 Gam.exe
+
 `
 
 <hr>
