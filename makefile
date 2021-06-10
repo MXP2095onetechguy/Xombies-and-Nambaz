@@ -1,5 +1,6 @@
 fin-file = "./bin/Gam.exe"
 fin-winfile = "./bin/Win-Gam.exe"
+fin-nixfile = "./bin/Gam.elf.o"
 srcpp = "Gam.cpp"
 ocpp = "object.o"
 icnsobj = "icon.o"
@@ -30,17 +31,19 @@ test-makevar:
 
 # start of build compilation set
 
+# build-unix: g++ $(srcpp) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-nixfile)
+
 build-fin:
-	build-icns-win g++ $(srcpp) $(icnsobj) -o $(fin-winfile)
+	g++ $(srcpp) $(icnsobj) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-winfile)
 
 build-fin-noicns:
 	g++ $(srcpp) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-file)
 
 build-compile:
-	g++ -c -Wall -g $(srcpp) -o $(ocpp)
+	g++ -c -Wall -static -g -static-libgcc -static-libstdc++ $(srcpp) -o $(ocpp)
 
 build-link:
-	g++ -g $(ocpp) -o $(fin-file)
+	g++ -static -Wall -g -static-libgcc -static-libstdc++ $(ocpp) -o $(fin-file)
 
 build-icns-win:
 	windres -i $(icnsrc) -o $(icnsobj)
