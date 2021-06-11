@@ -602,8 +602,37 @@ int main(int argc, char* argv[]){
         }
     }
 
+    if (DED == 0)
+    {
+        cout << endl << "You survived, " << name << "! ";
+        BEL();
+    }
+    else if (DED == 1) {
+        cout << endl << name << ", you R DED from the guessing part. ";
+        DET();
+    }
+    else if (DED == 2)
+    {
+        cout << endl << name << ", you R DED from the zombies. ";
+        DET();
+    }
+
+    cin >> *blank;
+    BEL();
+
+    cout << endl << "Final Stats played at " << whatisthetimeanddate() << endl;
+    cout << "Player Name:" << name << endl;
+    cout << "Final score: " << score << endl;
+    cout << "Final amout of zombies killed: " << zombiekilled << endl;
+    cout << "Final skill level: " << pskill << endl;
+    cout << "Final zombie count: " << zombiecount << endl;
+    cin >> *blank;
+    BEL();
+
+
     signal_exit_musix_thread.set_value(); //set value into promise
     musixThread.join();
+    cout << endl;
 
     while (true)
     {
