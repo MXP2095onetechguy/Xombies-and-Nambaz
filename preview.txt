@@ -1,0 +1,11 @@
+Final Stats played at Fri Jun 11 10:00:33 2021
+
+=========================================
+Player Name: Abigail
+Status: DEDed by zombies.
+In cheat mode: 0
+Final score: 0
+Final amout of zombies killed: 0
+Final skill level of player: 190
+Final skill level of zombie: 352
+Final zombie count: 1
