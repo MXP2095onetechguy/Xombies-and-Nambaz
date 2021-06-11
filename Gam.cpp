@@ -1,5 +1,5 @@
 /*
-* Copyright [yyyy] [name of copyright owner]
+* Copyright 2021 MXPSQL
 * 
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@
 #include <ctime> 
 #include <sstream>
 #include <vector>
+#include <stdlib.h>
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/generator_iterator.hpp>
 #include <boost/random.hpp>
