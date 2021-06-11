@@ -1,4 +1,4 @@
-Final Stats played at Fri Jun 11 10:07:00 2021
+Final Stats played at Fri Jun 11 11:33:21 2021
 
 =========================================
 Player Name: Abigail
@@ -6,6 +6,6 @@ Status: Alive and Fine
 In cheat mode: 0
 Final score: 1
 Final amout of zombies killed: 1
-Final skill level of player: 2297
-Final skill level of zombie: 901
-Final zombie count: 10
+Final skill level of player: 595
+Final skill level of zombie: 212
+Final zombie count: 1

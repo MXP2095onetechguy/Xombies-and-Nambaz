@@ -16,7 +16,7 @@
 
 /* install boost by dropping the boost library onto the include folder in the c++ include folder of g++ */
 
-// some of these code is original, while some are transplanted from my msvc code
+// some of these code is original, while some are transplanted from my msvc code, and maybe the transplanted code is modified
 
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -602,6 +602,7 @@ int main(int argc, char* argv[]){
         }
     }
 
+    // transplant and modified
     if (DED == 0)
     {
         cout << endl << "You survived, " << name << "! ";
@@ -620,6 +621,7 @@ int main(int argc, char* argv[]){
     cin >> *blank;
     BEL();
 
+    // transplanted code
     cout << endl << "Final Stats played at " << whatisthetimeanddate() << endl;
     cout << "Player Name:" << name << endl;
     cout << "Final score: " << score << endl;
