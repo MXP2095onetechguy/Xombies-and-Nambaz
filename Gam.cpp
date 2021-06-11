@@ -313,8 +313,11 @@ int main(int argc, char* argv[]){
             if(cheatmode == true)
             {
                 zombiecount += 100;
+                pskill += 1000;
             }
             BEL();
+            pskill *= zombiecount + randint(1, 10);
+            zskill *= zombiecount + randint(1, 5);
             break;
         }
         catch(invalid_argument eia){
@@ -343,32 +346,47 @@ int main(int argc, char* argv[]){
     {
         mynumber = randint(min, max);
         cout << "My number is between " << min << " and " << max << endl;
-        while(tries > 0)
+        while(true)
         {
             cout << "You have " << tries << " tries" << endl;
-            if (tries < 0)
+            if (tries < 1)
             {
                 DED = 1;
                 break;
             }
-            if (tries == 0) {
+            if (tries == 1) {
                 cout << "This is your last chance!" << endl;
             }
             cin >> buffer;
             try {
                 myguess = stoi(buffer);
-                if (tries < 0)
+                if (tries < 1)
+                {
+                    DED = 1;
+                    break;
+                }
+                if (tries < 1)
                 {
                     DED = 1;
                     break;
                 }
                 else {
+                    if(tries < 1)
+                    {
+                        DED = 1;
+                        break;
+                    }
                     if (myguess < mynumber)
                     {
                         cout << "Too low." << endl;
                         BEL();
                         zskill += 1;
                         pskill -= 2;
+                        if (tries < 1)
+                        {
+                            DED = 1;
+                            break;
+                        }
                     }
                     else if (myguess > mynumber)
                     {
@@ -376,15 +394,29 @@ int main(int argc, char* argv[]){
                         BEL();
                         zskill += 2;
                         pskill / randint(1, 2);
+                        if (tries < 1)
+                        {
+                            DED = 1;
+                            break;
+                        }
                     }
                     else {
                         cout << "Good." << endl;
                         BEL();
                         pskill = pskill * randint(2, 4);
                         break;
+                        
                     }
+
+                    if (tries < 1)
+                    {
+                        DED = 1;
+                        break;
+                    }
+
+                    
+                    tries -= 1;
                 }
-                tries -= 1;
             }
             catch(AbigailSaphiroRuntimeThiccBreastException artbe)
             {
@@ -401,6 +433,11 @@ int main(int argc, char* argv[]){
             catch(...)
             {
                 cout << "Exception dectected, input again" << endl;
+            }
+            if (tries < 1)
+            {
+                DED = 1;
+                break;
             }
         }
 
@@ -533,6 +570,11 @@ int main(int argc, char* argv[]){
             {
                 quit = true;
                 BEL();
+                int troll = randint(1, 43);
+                if(troll == 1 && cheatmode != true)
+                {
+                    DED = 2;
+                }
                 break;
             }
             else if (choice == "fight")
@@ -571,7 +613,7 @@ int main(int argc, char* argv[]){
         }
         string confirm = "";
 
-        cout << "Would you like your Final Stats be written to a file?" << endl << "Yes for writing, No for not writting. ";
+        cout << "Would you like your Final Stats be written to a file?" << endl << "Yes for writing, No for not writting. " << endl;
         cin >> confirm;
 
         if (confirm == "yes")
@@ -593,7 +635,7 @@ int main(int argc, char* argv[]){
                 }
             }
             else {
-                cout << endl << "Seems safe, I don't see any file named " << filename << ", But do you want to stay safe than sorry? Yes for sorry, but proud, or (either you choose no or other) for the safe.";
+                cout << endl << "Seems safe, I don't see any file named " << filename << ", But do you want to stay safe than sorry? Yes for sorry, but proud, or (either you choose no or other) for the safe." << endl;
                 string res = "";
                 cin >> res;
                 if (res == "yes")
