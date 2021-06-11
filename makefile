@@ -1,5 +1,7 @@
 # make variables
 SHELL=/bin/bash
+CXX = g++
+CXXFLAGS = -fdiagnostics-color -static -Wall -g -static-libgcc -static-libstdc++ -O2 -o
 # file variables
 fin-file = "./bin/Gam.exe"
 fin-winfile = "./bin/Win-Gam.exe"
@@ -39,16 +41,16 @@ test-makevar:
 # build-unix: g++ $(srcpp) -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-nixfile)
 
 build-fin:
-	g++ $(srcpp) $(icnsobj) -fdiagnostics-color -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-winfile)
+	$(CXX) $(srcpp) $(icnsobj) $(CXXFLAGS) $(fin-winfile)
 
 build-fin-noicns:
-	g++ $(srcpp) -fdiagnostics-color -static -Wall -g -static-libgcc -static-libstdc++ -o $(fin-file)
+	$(CXX) $(srcpp) $(CXXFLAGS) $(fin-file)
 
 build-compile:
-	g++ -c -Wall -fdiagnostics-color -static -g -static-libgcc -static-libstdc++ $(srcpp) -o $(ocpp)
+	$(CXX) -c $(CXXFLAGS) $(srcpp) -o $(ocpp)
 
 build-link:
-	g++ -static -fdiagnostics-color -Wall -g -static-libgcc -static-libstdc++ $(ocpp) -o $(fin-file)
+	$(CXX) -static $(CXXFLAGS) $(fin-file) $(ocpp)
 
 build-icns-win:
 	windres -i $(icnsrc) -o $(icnsobj)
