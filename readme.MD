@@ -10,8 +10,8 @@ This game was originally a mix of two games and then compiled with msvc, but I d
 <hr>
 How to build
 <hr>
-code dependency: Boost
-build dependency: make, g++, windres(only for windows), automake, autoconf, autoscan
+code dependency: [Boost](https://www.boost.org/)
+build dependency: make, g++, windres(only if you compile for winows with icon), automake, autoconf, autoscan {You need [msys2](https://www.msys2.org/) for these on windows}
 
 ### if you don't have it
 install the code dependency and build dependency with your package manager of your choice
