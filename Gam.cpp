@@ -90,6 +90,7 @@ int maxtries = 8;
 string desktop = getdesktop();
 string filename = "Final-Stats.txt";
 bool cheatmode = false;
+bool hushmusic = false;
 
 promise<void> signal_exit_musix_thread; //create promise object
 std::future<void> futura = signal_exit_musix_thread.get_future(); // create future objects
@@ -142,7 +143,10 @@ static void show_usage(string name)
         << "Options:\n"
         << "\t-h,--help\t\tShow this help message\n"
         << "\t-ns, --NOSTAT\t\tNo stat writting prompt\n"
-        << "\t-fn, --FILENAME\t\tThe name of the file\n"
+        << "\t-fn, --FILENAME\t\tThe name of the file, special usage: -(fn/--FILENAME) <name of the file>\n"
+        << "\t-nm, --NOMUSIX, --NOMUSIC\t\tDisable music\n"
+        << "\tVisit https://github.com/MXP2095onetechguy/Xombies-and-Nambaz for the code\n"
+        << "\tVisit https://github.com/MXP2095onetechguy/Xombies-and-Nambaz/wiki wiki for the documentation\n"
         << endl;
 }
 
@@ -263,6 +267,10 @@ int main(int argc, char* argv[]){
                     filename = clifilename;
                 }
             }
+            else if((arg == "-nm") || (arg == "--NOMUSIX") || (arg == "--NOMUSIC"))
+            {
+                hushmusic = true;
+            }
             else {
                 sources.push_back(argv[i]);
             }
@@ -270,6 +278,12 @@ int main(int argc, char* argv[]){
     }
 
     thread musixThread(music, std::move(futura));
+
+    if(hushmusic == true)
+    {
+        signal_exit_musix_thread.set_value(); //set value into promise
+        musixThread.join();
+    }
 
 
 #ifdef _WIN32
