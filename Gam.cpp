@@ -48,7 +48,7 @@
 #include "doot.h"
 #include "term.hpp"
 #include "color.hpp"
-#include "SomeFunc.hpp"
+#include "MXPFunc.hpp"
 
 #define GRN "\e[0;32m"
 #define RED "\e[0;31m"
@@ -117,7 +117,7 @@ int randint(int min, int max) { // new randomizer
 }
 
 void keyboardinterruptsignal(int signum) {
-    cout << endl << RED "Keyboard interrupt dectected, exiting with code " << signum << ".";
+    cerr << endl << RED "Keyboard interrupt dectected, exiting with code " << signum << ".";
 
     // cleanup and close up stuff here  
     // terminate program  
@@ -126,14 +126,14 @@ void keyboardinterruptsignal(int signum) {
 }
 
 void programtermsignal(int signum) {
-    cout << endl << RED "Program either did an illegal instruction or Another program sent a termination request to this program, exiting with code " << signum << ".";
+    cerr << endl << RED "Program either did an illegal instruction or Another program sent a termination request to this program, exiting with code " << signum << ".";
 
     exit(signum);
 }
 
 void termexitsignal(int signum)
 {
-    cout << endl << RED "Either the program hung up or the controlling terminal got terminated";
+    cerr << endl << RED "Either the program hung up or the controlling terminal got terminated";
 }
 
 static void show_usage(string name)

@@ -15,6 +15,8 @@
 */
 
 
+// c++ functions here
+
 #include <stdio.h>  /* defines FILENAME_MAX */
 #include <string.h>
 
@@ -39,10 +41,20 @@
     #define PLATFORM_NAME "android" // Android (implies Linux, so it must come first)
 #elif defined(__linux__)
     #define PLATFORM_NAME "linux" // Debian, Ubuntu, Gentoo, Fedora, openSUSE, RedHat, Centos and other
-#elif defined(unix) || !defined(__APPLE__) && defined(__MACH__)
+#elif defined(__unix__) || !defined(__APPLE__) && defined(__MACH__)
     #include <sys/param.h>
     #if defined(BSD)
-        #define PLATFORM_NAME "bsd" // FreeBSD, NetBSD, OpenBSD, DragonFly BSD
+        #if defined(__DragonFly__)
+            #define PLATFORM_NAME "dragonflybsd"
+        #elif defined(__FreeBSD__)
+            #define PLATFORM_NAME "freebsd"
+        #elif defined(__NetBSD__)
+            #define PLATFORM_NAME "netbsd"
+        #elif defined(__OpenBSD__)
+            #define PLATFORM_NAME "openbsd"
+        #else
+            #define PLATFORM_NAME "bsd_unknown"
+        #endif
     #endif
 #elif defined(__hpux)
     #define PLATFORM_NAME "hp-ux" // HP-UX
@@ -63,6 +75,14 @@
     #define PLATFORM_NAME "UNKNOWN"
 #endif
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+    #define UNIXPOSIX "POSIX"
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+    #define UNIXPOSIX "UNIX"
+#else
+    #define UNIXPOSIX "NOT"
+#endif
+
 using namespace std;
 
 
@@ -70,8 +90,12 @@ const string get_platform_name() {
     return PLATFORM_NAME;
 }
 
+const string getposixorunixorneither(){
+    return UNIXPOSIX;
+}
 
-string getmycwdir(){
+
+const string getmycwdir(){
     char buff[FILENAME_MAX];
     GetCurrentDir( buff, FILENAME_MAX );
     string current_working_dir(buff);
