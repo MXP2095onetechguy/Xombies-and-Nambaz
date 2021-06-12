@@ -684,7 +684,7 @@ int main(int argc, char* argv[]){
             FinalFile.open(filename, std::ofstream::out | std::ofstream::trunc);
             string endstatus = "";
 
-            cout << endl << "Writting to file, please don't close the game." << endl;
+            cout << endl << GRN "Writting to file, please don't close the game." << endl;
 
             if (DED == 2)
             {
@@ -705,7 +705,7 @@ int main(int argc, char* argv[]){
             if (FinalFile.is_open() != 1)
             {
                 // cout << FinalFile.is_open();
-                cout << "Unknown file openning error occured";
+                cerr << RED "Unknown file openning error occured";
                 break;
             }
 
@@ -721,7 +721,7 @@ int main(int argc, char* argv[]){
             FinalFile << "Final skill level of zombie: " << zskill << endl;
             FinalFile << "Final zombie count: " << zombiecount << endl;
 
-            cout << "File writting is done";
+            cout << GRN "File writting is done";
 
 
             FinalFile.close();
@@ -740,7 +740,7 @@ int main(int argc, char* argv[]){
     }
 
 
-    cout << endl << "You can safely exit the game. ";
+    cout << endl << GRN "You can safely exit the game. ";
     BEL();
     cin >> *blank;
     BEL();
