@@ -34,6 +34,9 @@
 * SOFTWARE.
 */
 
+// SPDX-License-Identifier: Apache-2.0  AND MIT
+
+
 /* install boost by dropping the boost library onto the include folder in the c++ include folder of g++ */
 
 // some of these code is original, while some are transplanted from my msvc code, and maybe the transplanted code is modified

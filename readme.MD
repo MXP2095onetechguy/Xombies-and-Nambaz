@@ -13,6 +13,8 @@ that apache license will appear in the github description and also this means th
 Some of these headers are licensed with other license, see the otherlicense folder for more info, these license are copied to show their license
 {hope that i won't get in trouble}
 
+here is the spdx identifier: `SPDX-License-Identifier: Apache-2.0  AND MIT`
+
 <hr>
 story
 <hr>
