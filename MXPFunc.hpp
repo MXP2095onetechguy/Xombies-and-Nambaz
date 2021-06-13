@@ -95,6 +95,25 @@ const string getposixorunixorneither(){
 }
 
 
+string getdesktop()
+{
+    string p = "";
+    string pd = "";
+#ifdef _WIN32
+    p = getenv("USERPROFILE");
+    pd = p + "\\desktop";
+    return pd;
+#elif defined(unix)
+    p = getenv("HOME");
+    pd = p + "/Desktop/example.txt";
+    return pd;
+#else
+    return "error, unknown os";
+#endif
+
+}
+
+
 const string getmycwdir(){
     char buff[FILENAME_MAX];
     GetCurrentDir( buff, FILENAME_MAX );
