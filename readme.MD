@@ -6,7 +6,7 @@ Game written in c++, Fight the zombies with numbers and get the highest score.
 ## License
 <hr>
 Licensed with MIT and Apache License, although Apache is more dominant than MIT in this project, this is the reason
-that apache license will appear in the github description
+that apache license will appear in the github description and also this means that the apache license is more enforced than the mit license
 
 Some of these headers are licensed with other license, see the otherlicense folder for more info, these license are copied to show their license
 {hope that i won't get in trouble}
