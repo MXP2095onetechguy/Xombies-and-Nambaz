@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------------------------------
-// Copyright (c) Marius Bancila 2013
+// Copyright (c) Marius Bancila 2013-2017
 //               http://mariusbancila.ro
 // ----------------------------------------------------------------------------------------------
-// License: Creative Commons Attribution-ShareAlike 3.0 Unported 
-//          http://creativecommons.org/licenses/by-sa/3.0/
+// License: GNU General Public License v3.0
+//          https://github.com/mariusbancila/cppconlib/blob/master/LICENSE
 // ----------------------------------------------------------------------------------------------
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
 // BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <string>
+#include <bitset>
 
 namespace conmanip
 {
@@ -70,17 +71,11 @@ namespace conmanip
 
    enum class console_modes
    {
-      echo                       = 1,
-      overwrite                  = 2,
-      hide_ctrl_c                = 4,
-      enable_mouse_selection     = 8,
+      echo = 1,
+      overwrite = 2,
+      hide_ctrl_c = 4,
+      enable_mouse_selection = 8,
    };
-
-   console_modes operator&(console_modes const a, console_modes const b)
-   {
-      return static_cast<console_modes>(
-         static_cast<int>(a) & static_cast<int>(b));
-   }
 
    enum class console_cleanup_options : int
    {
@@ -148,71 +143,107 @@ namespace conmanip
          ::SetConsoleTextAttribute(console, attr);
       }
 
-      void _setmode(HANDLE const console, console_modes const modes)
+      DWORD _addmode(DWORD mode, console_modes const cmode)
       {
-         DWORD mode = 0;
-         ::GetConsoleMode(console, &mode);
-
-         if(console_modes::echo == (modes & console_modes::echo))
+         if (console_modes::echo == cmode)
          {
             mode |= (ENABLE_ECHO_INPUT | ENABLE_INSERT_MODE);
          }
 
-         if(console_modes::overwrite == (modes & console_modes::overwrite))
+         if (console_modes::overwrite == cmode)
          {
             mode &= ~ENABLE_INSERT_MODE;
             mode |= ENABLE_EXTENDED_FLAGS;
          }
 
-         if(console_modes::hide_ctrl_c == (modes & console_modes::hide_ctrl_c))
+         if (console_modes::hide_ctrl_c == cmode)
          {
             mode |= ENABLE_PROCESSED_INPUT;
          }
 
-         if(console_modes::enable_mouse_selection == (modes & console_modes::enable_mouse_selection))
+         if (console_modes::enable_mouse_selection == cmode)
          {
             mode |= (ENABLE_QUICK_EDIT_MODE | ENABLE_EXTENDED_FLAGS);
          }
 
-         ::SetConsoleMode(console, mode);
+         return mode;
       }
 
-      void _clearmode(HANDLE const console, console_modes const modes)
+      DWORD _remmode(DWORD mode, console_modes const cmode)
       {
-         DWORD mode = 0;
-         ::GetConsoleMode(console, &mode);
-
-         if(console_modes::echo == (modes & console_modes::echo))
+         if (console_modes::echo == cmode)
          {
             mode &= ~(ENABLE_ECHO_INPUT | ENABLE_INSERT_MODE);
          }
 
-         if(console_modes::overwrite == (modes & console_modes::overwrite))
+         if (console_modes::overwrite == cmode)
          {
             mode |= (ENABLE_INSERT_MODE | ENABLE_EXTENDED_FLAGS);
          }
 
-         if(console_modes::hide_ctrl_c == (modes & console_modes::hide_ctrl_c))
+         if (console_modes::hide_ctrl_c == cmode)
          {
             mode &= ~ENABLE_PROCESSED_INPUT;
          }
 
-         if(console_modes::enable_mouse_selection == (modes & console_modes::enable_mouse_selection))
+         if (console_modes::enable_mouse_selection == cmode)
          {
             mode &= ~ENABLE_QUICK_EDIT_MODE;
+         }
+
+         return mode;
+      }
+
+      void _setmode(HANDLE const console, console_modes const cmode)
+      {
+         DWORD mode = 0;
+         ::GetConsoleMode(console, &mode);
+
+         ::SetConsoleMode(console, _addmode(mode, cmode));
+      }
+
+      void _setmode(HANDLE const console, std::initializer_list<console_modes> const cmodes)
+      {
+         DWORD mode = 0;
+         ::GetConsoleMode(console, &mode);
+
+         for(auto const & m : cmodes)
+         {
+            mode = _addmode(mode, m);
          }
 
          ::SetConsoleMode(console, mode);
       }
 
-      int _getposx(HANDLE const console)
+      void _clearmode(HANDLE const console, console_modes const cmode)
+      {
+         DWORD mode = 0;
+         ::GetConsoleMode(console, &mode);
+        
+         ::SetConsoleMode(console, _remmode(mode, cmode));
+      }
+
+      void _clearmode(HANDLE const console, std::initializer_list<console_modes> const cmodes)
+      {
+         DWORD mode = 0;
+         ::GetConsoleMode(console, &mode);
+
+         for (auto const & m : cmodes)
+         {
+            mode = _addmode(mode, m);
+         }
+
+         ::SetConsoleMode(console, mode);
+      }
+
+      short _getposx(HANDLE const console)
       {
          CONSOLE_SCREEN_BUFFER_INFO info;
          ::GetConsoleScreenBufferInfo(console, &info);
          return info.dwCursorPosition.X;
       }
 
-      void _setposx(HANDLE const console, int const x)
+      void _setposx(HANDLE const console, short const x)
       {
          CONSOLE_SCREEN_BUFFER_INFO info;
          ::GetConsoleScreenBufferInfo(console, &info);
@@ -220,14 +251,14 @@ namespace conmanip
          ::SetConsoleCursorPosition(console, info.dwCursorPosition);         
       }
 
-      int _getposy(HANDLE const console)
+      short _getposy(HANDLE const console)
       {
          CONSOLE_SCREEN_BUFFER_INFO info;
          ::GetConsoleScreenBufferInfo(console, &info);
          return info.dwCursorPosition.Y;
       }
 
-      void _setposy(HANDLE const console, int const y)
+      void _setposy(HANDLE const console, short const y)
       {
          CONSOLE_SCREEN_BUFFER_INFO info;
          ::GetConsoleScreenBufferInfo(console, &info);
@@ -312,32 +343,32 @@ namespace conmanip
       {
       }
 
-      void setmode(console_modes const modes)
+      void setmode(console_modes const mode)
       {
-         _details::_setmode(context.handle, modes);
+         _details::_setmode(context.handle, mode);
       }
 
-      void clearmode(console_modes const modes)
+      void clearmode(console_modes const mode)
       {
-         _details::_clearmode(context.handle, modes);
+         _details::_clearmode(context.handle, mode);
       }
 
-      int getposx()
+      short getposx()
       {
          return _details::_getposx(context.handle);
       }
 
-      void setposx(int const x)
+      void setposx(short const x)
       {
          _details::_setposx(context.handle, x);
       }
 
-      int getposy()
+      short getposy()
       {
          return _details::_getposy(context.handle);
       }
 
-      void setposy(int const y)
+      void setposy(short const y)
       {
          _details::_setposy(context.handle, y);
       }
@@ -347,7 +378,7 @@ namespace conmanip
          return _details::_getpos(context.handle);
       }
 
-      void setpos(int const x, int const y)
+      void setpos(short const x, short const y)
       {
          COORD coord = {x,y};
          _details::_setpos(context.handle, coord);
@@ -380,7 +411,7 @@ namespace conmanip
          return csbi.dwSize;
       }
 
-      bool setsize(int const x, int const y)
+      bool setsize(short const x, short const y)
       {
          COORD size = {x, y};
          return 0 != ::SetConsoleScreenBufferSize(context.handle, size);
@@ -502,9 +533,9 @@ namespace conmanip
       return console_manipulator<console_colors>(&_details::_setcolors, console_colors(text, background), context.handle);
    }
 
-   console_manipulator<console_modes> setmode(console_modes const modes)
+   console_manipulator<console_modes> setmode(console_modes const mode)
    {	
-      return console_manipulator<console_modes>(&_details::_setmode, modes, nullptr, false);
+      return console_manipulator<console_modes>(&_details::_setmode, mode, nullptr, false);
    }
 
    template <console_type StdHandle>
@@ -524,36 +555,36 @@ namespace conmanip
       return console_manipulator<console_modes>(&_details::_clearmode, modes, context.handle, false);
    }
 
-   console_manipulator<int> setposx(int const x)
+   console_manipulator<short> setposx(short const x)
    {	
-      return console_manipulator<int>(&_details::_setposx, x);
+      return console_manipulator<short>(&_details::_setposx, x);
    }
 
    template <console_type StdHandle>
-   console_manipulator<int> setposx(int const x, console_context<StdHandle> const context)
+   console_manipulator<short> setposx(short const x, console_context<StdHandle> const context)
    {	
-      return console_manipulator<int>(&_details::_setposx, x, context.handle);
+      return console_manipulator<short>(&_details::_setposx, x, context.handle);
    }
 
-   console_manipulator<int> setposy(int const y)
+   console_manipulator<short> setposy(short const y)
    {	
-      return console_manipulator<int>(&_details::_setposy, y);
+      return console_manipulator<short>(&_details::_setposy, y);
    }
 
    template <console_type StdHandle>
-   console_manipulator<int> setposy(int const y, console_context<StdHandle> const context)
+   console_manipulator<short> setposy(short const y, console_context<StdHandle> const context)
    {	
-      return console_manipulator<int>(&_details::_setposy, y, context.handle);
+      return console_manipulator<short>(&_details::_setposy, y, context.handle);
    }
 
-   console_manipulator<COORD> setpos(int const x, int const y)
+   console_manipulator<COORD> setpos(short const x, short const y)
    {	
       COORD c = {x, y};
       return console_manipulator<COORD>(&_details::_setpos, c);
    }
 
    template <console_type StdHandle>
-   console_manipulator<COORD> setpos(int const x, int const y, console_context<StdHandle> const context)
+   console_manipulator<COORD> setpos(short const x, short const y, console_context<StdHandle> const context)
    {	
       COORD c = {x, y};
       return console_manipulator<COORD>(&_details::_setpos, c, context.handle);
