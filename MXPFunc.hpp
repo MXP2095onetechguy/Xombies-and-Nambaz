@@ -33,9 +33,9 @@
 
 // operating system
 #if defined(_WIN32)
-    #define PLATFORM_NAME "windows64" // Windows
-#elif defined(_WIN64)
     #define PLATFORM_NAME "windows32" // Windows
+#elif defined(_WIN64)
+    #define PLATFORM_NAME "windows64" // Windows
 #elif defined(__CYGWIN__) && !defined(_WIN32)
     #define PLATFORM_NAME "windows" // Windows (Cygwin POSIX under Microsoft Window)
 #elif defined(__ANDROID__)
@@ -100,17 +100,19 @@ string getdesktop()
 {
     string p = "";
     string pd = "";
-#ifdef _WIN32
-    p = getenv("USERPROFILE");
-    pd = p + "\\desktop";
-    return pd;
-#elif defined(unix)
-    p = getenv("HOME");
-    pd = p + "/Desktop/example.txt";
-    return pd;
-#else
-    return "error, unknown os";
-#endif
+    if(get_platform_name() == "windows32" || get_platform_name() == "windows64"){
+        p = getenv("USERPROFILE");
+        pd = p + "\\desktop";
+        return pd;
+    }
+    else if(get_platform_name() == "dragonflybsd" || get_platform_name() == "freebsd" || get_platform_name() == "netbsd" || get_platform_name() == "openbsd"){
+        p = getenv("HOME");
+        pd = p + "/Desktop/example.txt";
+        return pd;
+    }
+    else{
+        return "error, unknown os";
+    }
 
 }
 

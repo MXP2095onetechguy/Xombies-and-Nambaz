@@ -1,7 +1,7 @@
 # make variables
 SHELL=/bin/bash
 CXX = g++
-CXXFLAGS = -fdiagnostics-color -static -Wall -lncurses -g -static-libgcc -static-libstdc++ -O2 -o
+CXXFLAGS = -fdiagnostics-color -static -Wall -g -static-libgcc -static-libstdc++ -O2 -o
 # file variables
 fin-file = "./bin/Gam.exe"
 fin-winfile = "./bin/Win-Gam.exe"
