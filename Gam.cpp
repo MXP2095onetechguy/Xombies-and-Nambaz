@@ -91,15 +91,15 @@ generator_type gen(time(NULL));
 
 string* blank = new string("");
 string buffer = "";
-string title = "Xombies and Nambaz";
+string title = "Xombies-and-Nambaz";
 bool showstat = true;
 string compname = "Abigail";
 string defname = compname;
 string name = defname;
 int maxtries = 8;
 string desktop = getdesktop();
-string filename = "Game-Final-Stats.txt";
-string logname = "Game-Log.log";
+string filename = (title + "Game-Final-Stats.txt");
+string logname = (title + "Game-Log.log");
 bool cheatmode = false;
 bool hushmusic = false;
 bool nolog = false;
@@ -401,6 +401,7 @@ int main(int argc, char* argv[]){
     {
         cheatmode = true;
         cout << "Cheat mode activated" << endl;
+        PLOG_INFO << "cheater";
     }
 
     cout<< "Ok " << name << ", How many zombies do you want to fight?" << endl;
