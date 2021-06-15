@@ -38,6 +38,7 @@
 
 
 /* install boost by dropping the boost library onto the include folder in the c++ include folder of g++ */
+/* install plog by gitcloning the repository here https://github.com/SergiusTheBest/plog and getting all the files at include and dropping it to the c++ include folder of g++ */
 
 // some of these code is original, while some are transplanted from my msvc code, and maybe the transplanted code is modified
 
@@ -67,11 +68,12 @@
 #include <boost/random.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
+#include <plog/Log.h>
+#include <plog/Initializers/RollingFileInitializer.h>
 
-#include "doot.h"
-#include "term.hpp"
-#include "color.hpp"
-#include "MXPFunc.hpp"
+#include "headers/doot.h"
+#include "headers/term.hpp"
+#include "headers/MXPFunc.hpp"
 
 #define GRN "\e[0;32m"
 #define RED "\e[0;31m"
@@ -81,6 +83,7 @@ using namespace std::this_thread;
 using namespace std::chrono;
 using namespace boost::multiprecision;
 using namespace boost::random;
+using namespace plog;
 
 typedef independent_bits_engine<mt19937, 256, cpp_int> generator_type;
 generator_type gen(time(NULL));
@@ -95,9 +98,11 @@ string defname = compname;
 string name = defname;
 int maxtries = 8;
 string desktop = getdesktop();
-string filename = "Final-Stats.txt";
+string filename = "Game-Final-Stats.txt";
+string logname = "Game-Log.log";
 bool cheatmode = false;
 bool hushmusic = false;
+bool nolog = false;
 const string thisisyouimg = "##%%%%%%&@&&&&&%*/*/***,////////////////////,,********/////((#%&%############### \n"
 "%%%%%%%%&@&&&&&&&&%((((#/////////////////(((*,*******/////((#%%%################ \n"
 "%%%%%%%%%%%%%%%%(((((((((//////////(#####%%#%********/////((#%######%########### \n"
@@ -197,7 +202,9 @@ static void show_usage(string name)
         << "Options:\n"
         << "\t-h,--help\t\tShow this help message\n"
         << "\t-ns, --NOSTAT\t\tNo stat writting prompt\n"
+        << "\t-nl, --NOLOG, --NOLOGGING\t\tNo logs written\n"
         << "\t-fn, --FILENAME\t\tThe name of the file, special usage: -(fn/--FILENAME) <name of the file>\n"
+        << "\t-ln, --LOGNAME\t\tThe name of log file, special usage: like -fn but replace (-fn/--FILENAME) with (-ln/--LOGNAME)\n"
         << "\t-nm, --NOMUSIX, --NOMUSIC\t\tDisable music\n"
         << "\tVisit https://github.com/MXP2095onetechguy/Xombies-and-Nambaz for the code\n"
         << "\tVisit https://github.com/MXP2095onetechguy/Xombies-and-Nambaz/wiki wiki for the documentation\n"
@@ -314,7 +321,7 @@ int main(int argc, char* argv[]){
                 string clifilename = argv[(i + 1)];
                 if(clifilename.empty())
                 {
-                    cout << RED "Filename expected ar -fn or --FILENAME";
+                    cout << RED "Filename expected after -fn or --FILENAME";
                     return 1;
                 }
                 else{
@@ -325,13 +332,35 @@ int main(int argc, char* argv[]){
             {
                 hushmusic = true;
             }
+            else if((arg == "-nl") || (arg == "--NOLOG") || (arg == "--NOLOGGING"))
+            {
+                nolog = true;
+            }
+            else if((arg == "-ln") || (arg == "--LOGNAME"))
+            {
+                string clilogname = argv[(i + 1)];
+                if(clilogname.empty())
+                {
+                    cout << RED "Filename expected after -ln or --LOGNAME";
+                    return 1;
+                }
+                else{
+                    logname = clilogname;
+                }
+            }
             else {
                 sources.push_back(argv[i]);
             }
         }
     }
 
+    const char* constlogname = logname.c_str();
+
     thread musixThread(music, std::move(futura));
+    if(nolog == false)
+    {
+        plog::init(plog::verbose, constlogname);
+    }
 
     if(hushmusic == true)
     {
@@ -357,6 +386,10 @@ int main(int argc, char* argv[]){
     if(name.empty())
     {
         name = defname;
+        if(nolog == false)
+        {
+            PLOG_WARNING << "No name entered.";
+        }
     }
     else if(name == compname)
     {
@@ -375,7 +408,7 @@ int main(int argc, char* argv[]){
     while(true){
         cin >> buffer;
         try{
-            if (buffer == "Abigail") {
+            if (buffer == compname) {
                 throw ASRTBE;
             }
             zombiecount = stoi(buffer);
@@ -396,6 +429,10 @@ int main(int argc, char* argv[]){
         catch(AbigailSaphiroRuntimeThiccBreastException artbe){
             BEL();
             cout << artbe.what();
+            if(nolog == false)
+            {
+                PLOG_FATAL << "Trololololo, you should never put that.";
+            }
             throw ASRTBE;
             return 1;
         }
@@ -775,6 +812,10 @@ int main(int argc, char* argv[]){
             {
                 // cout << FinalFile.is_open();
                 cerr << RED "Unknown file openning error occured";
+                if(nolog == false)
+                {
+                    PLOG_ERROR << "File error, the code is " << FinalFile.is_open();
+                }
                 break;
             }
 
