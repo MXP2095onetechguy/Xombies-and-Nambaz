@@ -308,6 +308,7 @@ int main(int argc, char* argv[]){
         std::string destination;
         for (int i = 1; i < argc; ++i) {
             std::string arg = argv[i];
+            int nexti = (i + 1);
             if ((arg == "-h") || (arg == "--help")) {
                 show_usage(argv[0]);
                 return 0;
@@ -318,7 +319,7 @@ int main(int argc, char* argv[]){
             }
             else if((arg == "-fn") || (arg == "--FILENAME"))
             {
-                string clifilename = argv[(i + 1)];
+                string clifilename = argv[nexti];
                 if(clifilename.empty())
                 {
                     cout << RED "Filename expected after -fn or --FILENAME";
@@ -338,7 +339,7 @@ int main(int argc, char* argv[]){
             }
             else if((arg == "-ln") || (arg == "--LOGNAME"))
             {
-                string clilogname = argv[(i + 1)];
+                string clilogname = argv[nexti];
                 if(clilogname.empty())
                 {
                     cout << RED "Filename expected after -ln or --LOGNAME";
@@ -355,6 +356,16 @@ int main(int argc, char* argv[]){
     }
 
     const char* constlogname = logname.c_str();
+
+    std::ifstream lfile(constlogname);
+    if(lfile)
+    {
+        lfile.close();
+        std::remove(constlogname);
+    }
+    else{
+        lfile.close();
+    }
 
     thread musixThread(music, std::move(futura));
     if(nolog == false)
@@ -785,6 +796,8 @@ int main(int argc, char* argv[]){
                     break;
                 }
             }
+
+            ifile.close();
 
 
             std::ofstream FinalFile;
