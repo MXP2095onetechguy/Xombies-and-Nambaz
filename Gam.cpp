@@ -357,16 +357,6 @@ int main(int argc, char* argv[]){
 
     const char* constlogname = logname.c_str();
 
-    std::ifstream lfile(constlogname);
-    if(lfile)
-    {
-        lfile.close();
-        std::remove(constlogname);
-    }
-    else{
-        lfile.close();
-    }
-
     thread musixThread(music, std::move(futura));
     if(nolog == false)
     {
