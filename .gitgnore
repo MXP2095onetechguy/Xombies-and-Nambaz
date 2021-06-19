@@ -3,4 +3,5 @@ emsdk/
 Final-Stats.txt
 Gam.exe
 Win-Gam.exe
-./vscode
+.vscode/
+docx/

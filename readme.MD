@@ -26,6 +26,8 @@ How to build
 code dependency: [Boost](https://www.boost.org/)
 build dependency: make, g++, windres(only if you compile for winows with icon), automake, autoconf, autoscan {You need [msys2](https://www.msys2.org/) for these on windows}
 
+document dependency: make and doxygen to build a new documentation
+
 ### if you don't have it
 install the code dependency and build dependency with your package manager of your choice
 
