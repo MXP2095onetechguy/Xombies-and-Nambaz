@@ -59,6 +59,19 @@ build-icns-win:
 
 # end of build compilation set
 
+# start of document builder
+
+docs: doc
+
+document: doc
+
+documents: doc
+
+doc: 
+	doxygen Doxyfile
+
+# end of document builder
+
 setup-posix: 
 	rm -rf bin
 	clear

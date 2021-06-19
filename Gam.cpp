@@ -42,7 +42,14 @@
 
 // some of these code is original, while some are transplanted from my msvc code, and maybe the transplanted code is modified
 
+/** 
+ *  @file   Gam.cpp
+ *  @brief  Game with numbers and zombies
+ *  @author MXPSQL
+ *  @date   2021-06-15
+ ***********************************************/
 
+/// @brief for msvc
 #define _CRT_SECURE_NO_WARNINGS
 
 /* Esentiall, this is console IO, must have in c++ or c programs. */
@@ -75,7 +82,9 @@
 #include "headers/term.hpp"
 #include "headers/MXPFunc.hpp"
 
+/// @brief green text
 #define GRN "\e[0;32m"
+/// @brief red text
 #define RED "\e[0;31m"
 
 using namespace std;
@@ -157,8 +166,13 @@ std::future<void> futura = signal_exit_musix_thread.get_future(); // create futu
 
 // class
 
+/** @brief generator exception implemented as a joke.
+ * 
+ * @details Yeah, nothing intresting.
+*/
 class AbigailSaphiroRuntimeThiccBreastException : public exception {
 public:
+    /** tells what is wrong */
     const char* what() const throw()
     {
         return "What, EXCEPTION because Abigail Saphiro's breast are to fat and your t-strap high heel shoes bow tie is falling off, also your t-strap is torn on your t-strap high heel shoe and also the fact that you are sexy and better destory those flats and high heel and tear the straps on the flats and the high heel and now your bow tie on your t - strap high heel shoes bow tie has fallen off, and they smell horrible as Abigail Spahiro's breast scent and her feet scent combined, P-U, however Abigail Saphiro's feet should be licked by a goat and you better make her breast thicc!";
@@ -170,11 +184,25 @@ AbigailSaphiroRuntimeThiccBreastException ASRTBE;
 
 // functions
 
+
+
+/**
+ *  @brief generate random numbers
+ * 
+ *  @details generate random numbers with boost.random
+ * 
+ *  @param min minimum number for randint
+ *  
+ *  @param max maximum number for randint
+ * 
+ *  @return result of boost.random
+ */
 int randint(int min, int max) { // new randomizer
     boost::random::uniform_int_distribution<> dist(min, max);
     int res = dist(gen);
     return res;
 }
+
 
 void keyboardinterruptsignal(int signum) {
     cerr << endl << RED "Keyboard interrupt dectected, exiting with code " << signum << ".";
@@ -223,17 +251,31 @@ string whatisthetimeanddate()
 }
 
 
+/**
+ * @brief make square beeps 
+*/
 void BEL()
 {
     beep(1000, 100);
 }
 
+/**
+ * @brief make noise beeps
+*/
 void DET()
 {
     beep(500, 55);
 }
 
-// this is transplanted
+/**
+ *  @brief play music.
+ * 
+ *  @details this is transplanted and plays music on a separate thread.
+ * 
+ *  @param future stop upon promise is set into value
+ * 
+ *  @warning this must be joined when exiting if compiled with msvc or else a popup will appear that this thread has called abort
+*/ 
 int music(std::future<void> future)
 {
     // not the best way to generate music, but it works although it is hacky and tacky
@@ -272,7 +314,12 @@ int music(std::future<void> future)
 }
 
 
-// main boi
+/** 
+ * @brief main boi
+ * 
+ * @details this is the main entry point for the program as specified in the source as the main boi 
+ * 
+ */
 int main(int argc, char* argv[]){
 
     int zombiecount = 0;
@@ -293,6 +340,7 @@ int main(int argc, char* argv[]){
 
 
     BEL();
+
     signal(SIGABRT, keyboardinterruptsignal);
     signal(SIGINT, keyboardinterruptsignal);
     signal(SIGILL, programtermsignal);

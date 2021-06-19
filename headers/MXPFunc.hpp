@@ -16,9 +16,17 @@
 
 // SPDX-License-Identifier: Apache-2.0
 
+/** 
+ *  @file   MXPFunc.hpp
+ *  @brief  Functions for Gam.cpp
+ *  @author MXPSQL
+ *  @date   2021-06-19
+ ***********************************************/
+
 // c++ functions here
 
 #include <stdio.h>  /* defines FILENAME_MAX */
+#include <iostream>
 #include <string.h>
 
 #ifdef _WIN32
@@ -28,7 +36,6 @@
 #include <unistd.h>
 #define GetCurrentDir getcwd
 #endif
-#include<iostream>
 
 
 // operating system
@@ -37,7 +44,7 @@
 #elif defined(_WIN64)
     #define PLATFORM_NAME "windows64" // Windows
 #elif defined(__CYGWIN__) && !defined(_WIN32)
-    #define PLATFORM_NAME "windows" // Windows (Cygwin POSIX under Microsoft Window)
+    #define PLATFORM_NAME "cygwin" // Windows (Cygwin POSIX under Microsoft Window)
 #elif defined(__ANDROID__)
     #define PLATFORM_NAME "android" // Android (implies Linux, so it must come first)
 #elif defined(__linux__)
@@ -56,6 +63,8 @@
         #else
             #define PLATFORM_NAME "bsd_unknown"
         #endif
+    #else
+        #define PLATFORM_NAME "unix"
     #endif
 #elif defined(__hpux)
     #define PLATFORM_NAME "hp-ux" // HP-UX
@@ -86,21 +95,22 @@
 
 using namespace std;
 
-
+/// @brief get the operating system name
 const string get_platform_name() {
     return PLATFORM_NAME;
 }
 
+/// @brief check if the os is posix or unix or neither
 const string getposixorunixorneither(){
     return UNIXPOSIX;
 }
 
-
+/// @brief get user desktop
 string getdesktop()
 {
     string p = "";
     string pd = "";
-    if(get_platform_name() == "windows32" || get_platform_name() == "windows64"){
+    if(get_platform_name() == "windows32" || get_platform_name() == "windows64" || get_platform_name() == "cygwin"){
         p = getenv("USERPROFILE");
         pd = p + "\\desktop";
         return pd;
@@ -116,7 +126,7 @@ string getdesktop()
 
 }
 
-
+/// @brief get current working directory
 const string getmycwdir(){
     char buff[FILENAME_MAX];
     GetCurrentDir( buff, FILENAME_MAX );
