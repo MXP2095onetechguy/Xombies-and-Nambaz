@@ -21,7 +21,7 @@ story
 This game was originally a mix of two games and then compiled with msvc, but I decided to go with mingw.
 
 <hr>
-How to build
+How to build and make documentation
 <hr>
 code dependency: [Boost](https://www.boost.org/)
 build dependency: make, g++, windres(only if you compile for winows with icon), automake, autoconf, autoscan {You need [msys2](https://www.msys2.org/) for these on windows}
@@ -44,4 +44,14 @@ cd bin
 
 Gam.exe
 
+
+or maybe use
+
+make
+```
+
+to build docs, use
+
+```
+make doc
 ```
