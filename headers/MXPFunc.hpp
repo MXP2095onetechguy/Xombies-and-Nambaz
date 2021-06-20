@@ -37,7 +37,10 @@
 #define GetCurrentDir getcwd
 #endif
 
-
+/// @brief check if the header is included more than once (header guard)
+#ifndef MXPFunc_hpp
+/// @brief mark that the header is included
+#define MXPFunc_hpp
 // operating system
 #if defined(_WIN32)
     #define PLATFORM_NAME "windows32" // Windows
@@ -133,3 +136,4 @@ const string getmycwdir(){
     string current_working_dir(buff);
     return current_working_dir;
 }
+#endif
