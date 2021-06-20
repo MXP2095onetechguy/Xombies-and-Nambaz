@@ -3,6 +3,11 @@ emsdk/
 Final-Stats.txt
 Gam.exe
 Win-Gam.exe
+Gam.o
+Gam.obj
+bin/Gam.exe
+bin/*
+bin/Win-Gam.exe
 .vscode/
 docx/
 plog/
