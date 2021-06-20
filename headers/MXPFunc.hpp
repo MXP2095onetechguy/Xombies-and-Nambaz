@@ -18,7 +18,7 @@
 
 /** 
  *  @file   MXPFunc.hpp
- *  @brief  Functions for Gam.cpp
+ *  @brief  Functions for Gam.cpp and maybe more
  *  @author MXPSQL
  *  @date   2021-06-19
  ***********************************************/
