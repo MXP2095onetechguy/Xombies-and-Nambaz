@@ -550,7 +550,7 @@ int main(int argc, char* argv[]){
                     {
                         cout << "Too high." << endl;
                         BEL();
-                        zskill += 2;
+                        zskill += (2 * randint(1, 3));
                         pskill / randint(1, 2);
                         if (tries < 1)
                         {
@@ -561,7 +561,7 @@ int main(int argc, char* argv[]){
                     else {
                         cout << "Good." << endl;
                         BEL();
-                        pskill = pskill * randint(2, 4);
+                        pskill = pskill + (randint(2, 4) * 2);
                         break;
                         
                     }
