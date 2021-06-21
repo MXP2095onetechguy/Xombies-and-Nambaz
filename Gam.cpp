@@ -72,11 +72,6 @@
 #include <sstream>
 #include <vector>
 #include <stdlib.h>
-#include <boost/multiprecision/cpp_int.hpp>
-#include <boost/generator_iterator.hpp>
-#include <boost/random.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <plog/Log.h>
 #include <plog/Initializers/RollingFileInitializer.h>
 
@@ -96,8 +91,7 @@ using namespace boost::multiprecision;
 using namespace boost::random;
 using namespace plog;
 
-typedef independent_bits_engine<mt19937, 256, cpp_int> generator_type;
-generator_type gen(time(NULL));
+
 
 
 string* blank = new string("");
@@ -185,25 +179,6 @@ AbigailSaphiroRuntimeThiccBreastException ASRTBE;
 
 
 // functions
-
-
-
-/**
- *  @brief generate random numbers
- * 
- *  @details generate random numbers with boost.random
- * 
- *  @param min minimum number for randint
- *  
- *  @param max maximum number for randint
- * 
- *  @return result of boost.random
- */
-int randint(int min, int max) { // new randomizer
-    boost::random::uniform_int_distribution<> dist(min, max);
-    int res = dist(gen);
-    return res;
-}
 
 
 void keyboardinterruptsignal(int signum) {

@@ -28,6 +28,13 @@
 #include <stdio.h>  /* defines FILENAME_MAX */
 #include <iostream>
 #include <string.h>
+#include <ctime> 
+#include <chrono>
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/generator_iterator.hpp>
+#include <boost/random.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -36,6 +43,15 @@
 #include <unistd.h>
 #define GetCurrentDir getcwd
 #endif
+
+using namespace std;
+using namespace std::chrono;
+using namespace boost::multiprecision;
+using namespace boost::random;
+
+
+typedef independent_bits_engine<mt19937, 256, cpp_int> generator_type;
+generator_type gen(time(NULL));
 
 /// @brief check if the header is included more than once (header guard)
 #ifndef MXPFunc_hpp
@@ -135,5 +151,23 @@ const string getmycwdir(){
     GetCurrentDir( buff, FILENAME_MAX );
     string current_working_dir(buff);
     return current_working_dir;
+}
+
+
+/**
+ *  @brief generate random numbers
+ * 
+ *  @details generate random numbers with boost.random
+ * 
+ *  @param min minimum number for randint
+ *  
+ *  @param max maximum number for randint
+ * 
+ *  @return result of boost.random
+ */
+int randint(int min, int max) { // new randomizer
+    boost::random::uniform_int_distribution<> dist(min, max);
+    int res = dist(gen);
+    return res;
 }
 #endif
