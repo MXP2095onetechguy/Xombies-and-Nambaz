@@ -36,22 +36,50 @@ type make
 go to bin once its done
 excecute Gam.exe or ./Gam to play it.
 
-build steps
+build steps for windows without autotools
 ```
-make
+make -f=makefile.bak
 
 cd bin
 
 Gam.exe
 
+```
+build steps for linux without autotools
+```
+make -f=makefile.bak
 
-or maybe use
+cd bin
 
-make
+./Gam.exe
+
 ```
 
-to build docs, use
+
+build steps with autotools
+
+```
+./configure
+
+make
+
+make install; sudo make install
+
+```
+
+to setup autotools
+
+```
+mv configure.scan configure.ac
+
+autoconf
+
+```
+
+<hr>
+Build docs, use
 
 ```
 make doc
 ```
+and make sure that doxygen is used
