@@ -159,21 +159,17 @@ const string thisisyouimg = "##%%%%%%&@&&&&&%*/*/***,////////////////////,,*****
 promise<void> signal_exit_musix_thread; //create promise object
 std::future<void> futura = signal_exit_musix_thread.get_future(); // create future objects
 
-
-// class
-
-/** @brief generator exception implemented as a joke.
- * 
- * @details Yeah, nothing intresting.
-*/
 class AbigailSaphiroRuntimeThiccBreastException : public exception {
-public:
-    /** tells what is wrong */
-    const char* what() const throw()
-    {
-        return "What, EXCEPTION because Abigail Saphiro's breast are to fat and your t-strap high heel shoes bow tie is falling off, also your t-strap is torn on your t-strap high heel shoe and also the fact that you are sexy and better destory those flats and high heel and tear the straps on the flats and the high heel and now your bow tie on your t - strap high heel shoes bow tie has fallen off, and they smell horrible as Abigail Spahiro's breast scent and her feet scent combined, P-U, however Abigail Saphiro's feet should be licked by a goat and you better make her breast thicc!";
-    }
+	public:
+		const char* what() const throw()
+		{
+			return "Exception because Abigail Saphiro's breast are to fat and your female t-strap high heel shoes for female's bow tie is falling off, also your t-strap is torn on your t-strap high heel shoe"
+"and also the fact that you are sexy and better destory those flats and high heel"
+"and tear the straps on the flats and the high heel and now your bow tie on your t-strap high heel shoes bow tie has fallen off, and they smell horrible as Abigail Saphiro's breast scent and her feet scent combined, P-U, hope that your already broken t-strap high heel's heel breaks off and you use a plier to pull the sole out and use anther heel to break the t-strap heel, what a jerk of that t-strap shoe and she deserved to be destroyed";
+		}
 };
+
+
 
 AbigailSaphiroRuntimeThiccBreastException ASRTBE;
 
@@ -525,8 +521,8 @@ int main(int argc, char* argv[]){
                     {
                         cout << "Too high." << endl;
                         BEL();
-                        zskill += (2 * randint(1, 3));
-                        pskill / randint(1, 2);
+                        zskill += randint(1, 2);
+                        pskill -= 1;
                         if (tries < 1)
                         {
                             DED = 1;
@@ -536,7 +532,8 @@ int main(int argc, char* argv[]){
                     else {
                         cout << "Good." << endl;
                         BEL();
-                        pskill = pskill + (randint(2, 4) * 2);
+                        pskill = pskill + (randint(1, 5) * (randint(2, 4) * 2));
+                        zskill -= (randint(1, 5) * 2);
                         break;
                         
                     }
@@ -580,6 +577,8 @@ int main(int argc, char* argv[]){
         }
 
         cout << endl;
+
+        cout << pskill << "|" << zskill << endl;
 
         if (zskill > 10) {
             cout << endl << "Here comes some strong boy zombie!" << endl;
@@ -723,6 +722,21 @@ int main(int argc, char* argv[]){
 
         }
 
+
+        int plane = randint(1, 3);
+        if(plane == 1)
+        {
+            cout << "At this moment, an airplane full of bricks always fly by your path. " << endl;
+            int bricked = randint(1, 100);
+            {
+                if(bricked < 3)
+                {   
+                    cout << "One of the bricks fall out and hit your hed, you are DED as a doornail" << endl;
+                    DED = 3;
+                }
+            }
+        }
+
         if (DED != 0)
         {
             break;
@@ -750,6 +764,10 @@ int main(int argc, char* argv[]){
         cout << endl << name << ", you R DED from the zombies. ";
         DET();
     }
+    else if (DED == 3)
+    {
+        cout << endl << name << ", you are DED as a doornail because the brick that fell out of a cargo plane hit your head.";
+    }
 
     cin >> *blank;
     BEL();
@@ -764,8 +782,10 @@ int main(int argc, char* argv[]){
     cin >> *blank;
     BEL();
 
-
-    signal_exit_musix_thread.set_value(); //set value into promise
+    if(hushmusic == false)
+    {
+        signal_exit_musix_thread.set_value(); //set value into promise
+    }
     musixThread.join();
     cout << endl;
 
@@ -821,7 +841,11 @@ int main(int argc, char* argv[]){
 
             cout << endl << GRN "Writting to file, please don't close the game." << endl;
 
-            if (DED == 2)
+            if(DED == 3)
+            {
+                endstatus = "DED as a doornail because a brick fell on head";
+            }
+            else if (DED == 2)
             {
                 endstatus = "DEDed by zombies.";
             }

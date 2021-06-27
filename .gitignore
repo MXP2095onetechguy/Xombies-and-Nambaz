@@ -3,6 +3,16 @@ emsdk/
 Final-Stats.txt
 Xombies-and-Nambaz_Game-Final-Stats.txt
 Xombies-and-Nambaz_Game-Log.log
+aclocal.m4
+configure
+missing
+compile
+config.log
+config.status
+configure.ac
+decomp
+install-sh
+configure~
 Gam.exe
 Win-Gam.exe
 Gam.o

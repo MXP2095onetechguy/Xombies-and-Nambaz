@@ -18,7 +18,7 @@ icnsrc = "resource.rc"
 all: setup-posix build
 
 
-build: build-fin-noicns
+build: icon.o build-fin-noicns
 
 build-win: build-fin
 
