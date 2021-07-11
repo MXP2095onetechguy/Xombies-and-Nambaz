@@ -74,6 +74,7 @@
 #include <stdlib.h>
 #include <plog/Log.h>
 #include <plog/Initializers/RollingFileInitializer.h>
+#include "headers/PDCurses/curses.h"
 
 #include "headers/doot.h"
 #include "headers/term.hpp"
@@ -102,6 +103,7 @@ string compname = "Abigail";
 string defname = compname;
 string name = defname;
 int maxtries = 8;
+int zeconds = 0;
 string desktop = getdesktop();
 string filename = (title + "_Game-Final-Stats.txt");
 string logname = (title + "_Game-Log.log");
@@ -159,13 +161,17 @@ const string thisisyouimg = "##%%%%%%&@&&&&&%*/*/***,////////////////////,,*****
 promise<void> signal_exit_musix_thread; //create promise object
 std::future<void> futura = signal_exit_musix_thread.get_future(); // create future objects
 
+
+promise<void> signal_exit_time_thread; //create promise object
+std::future<void> futura2 = signal_exit_time_thread.get_future(); // create future objects
+
 class AbigailSaphiroRuntimeThiccBreastException : public exception {
 	public:
 		const char* what() const throw()
 		{
-			return "Exception because Abigail Saphiro's breast are to fat and your female t-strap high heel shoes for female's bow tie is falling off, also your t-strap is torn on your t-strap high heel shoe"
+			return "What, EXCEPTION Exception because Abigail Saphiro's breast are to fat and your female t-strap high heel shoes for female's bow tie is falling off, also your t-strap is torn on your t-strap high heel shoe"
 "and also the fact that you are sexy and better destory those flats and high heel"
-"and tear the straps on the flats and the high heel and now your bow tie on your t-strap high heel shoes bow tie has fallen off, and they smell horrible as Abigail Saphiro's breast scent and her feet scent combined, P-U, hope that your already broken t-strap high heel's heel breaks off and you use a plier to pull the sole out and use anther heel to break the t-strap heel, what a jerk of that t-strap shoe and she deserved to be destroyed";
+"and tear the straps on the flats and the high heel and now your bow tie on your t-strap high heel shoes bow tie has fallen off, and they smell horrible as Abigail Saphiro's breast scent and her feet scent combined, P-U, hope that your already broken t-strap high heel's heel breaks off and you use a plier to pull the sole out and use anther heel to break the t-strap heel, what a jerk of that t-strap shoe and she deserved to be destroyed, however Abigail Saphiro's feet should be licked by a goat to scrape her skin off and you better make her breast thicc!";
 		}
 };
 
@@ -178,6 +184,7 @@ AbigailSaphiroRuntimeThiccBreastException ASRTBE;
 
 
 void keyboardinterruptsignal(int signum) {
+    endwin();
     cerr << endl << RED "Keyboard interrupt dectected, exiting with code " << signum << ".";
 
     // cleanup and close up stuff here  
@@ -187,6 +194,7 @@ void keyboardinterruptsignal(int signum) {
 }
 
 void programtermsignal(int signum) {
+    endwin();
     cerr << endl << RED "Program either did an illegal instruction or Another program sent a termination request to this program, exiting with code " << signum << ".";
 
     exit(signum);
@@ -194,19 +202,22 @@ void programtermsignal(int signum) {
 
 void termexitsignal(int signum)
 {
+    endwin();
     cerr << endl << RED "Either the program hung up or the controlling terminal got terminated";
+    exit(signum);
 }
 
 static void show_usage(string name)
 {
     std::cout << "Usage: " << name << " <option(s)> SOURCES\n"
         << "Options:\n"
-        << "\t-h,--help\t\tShow this help message\n"
-        << "\t-ns, --NOSTAT\t\tNo stat writting prompt\n"
-        << "\t-nl, --NOLOG, --NOLOGGING\t\tNo logs written\n"
-        << "\t-fn, --FILENAME\t\tThe name of the file, special usage: -(fn/--FILENAME) <name of the file>\n"
-        << "\t-ln, --LOGNAME\t\tThe name of log file, special usage: like -fn but replace (-fn/--FILENAME) with (-ln/--LOGNAME)\n"
-        << "\t-nm, --NOMUSIX, --NOMUSIC\t\tDisable music\n"
+        << "\t-h,--help, /H, /HLP\t\tShow this help message\n"
+        << "\t-ns, --NOSTAT, /NS\t\tNo stat writting prompt\n"
+        << "\t-nl, --NOLOG, --NOLOGGING, /NL\t\tNo logs written\n"
+        << "\t-fn, --FILENAME, /FN\t\tThe name of the file, special usage: -(fn/--FILENAME) <name of the file>\n"
+        << "\t-ln, --LOGNAME, /LN\t\tThe name of log file, special usage: like -fn but replace (-fn/--FILENAME) with (-ln/--LOGNAME)\n"
+        << "\t-nm, --NOMUSIX, --NOMUSIC, /NM\t\tDisable music\n"
+        << "\t-cs, --CLEARSCREEN, --CLS, --CLEAR, /CLS, /CS, /CLEAR\t\tClear the screen as the game start\n"
         << "\tVisit https://github.com/MXP2095onetechguy/Xombies-and-Nambaz for the code\n"
         << "\tVisit https://github.com/MXP2095onetechguy/Xombies-and-Nambaz/wiki wiki for the documentation\n"
         << endl;
@@ -268,7 +279,7 @@ int music(std::future<void> future)
         beep(400, 750);
         beep(500, 500);
         sleep_for(milliseconds(1000));
-        cout << '\a';
+        printw('\a');
         /*
         if (musix == false)
         {
@@ -286,6 +297,50 @@ int music(std::future<void> future)
     return 0;
 }
 
+/**
+ * @brief stopwatch thread
+ * 
+ * @details stopwatch thread for the game to check how much has it ben played, run with thread for non blocking
+ * 
+ * @param future stop upon promise is set into value
+ * 
+ * @warning this must be joined when exiting if compiled with msvc or else a popup will appear that this thread has called abort
+ */ 
+int durationtimer(std::future<void> future)
+{
+    while(future.wait_for(chrono::milliseconds(1)) == future_status::timeout)
+    {
+        zeconds += 1;
+        sleep_for(seconds(1));
+    }
+    return 0;
+}
+
+
+string getstring()
+{
+    std::string input;
+
+    // let the terminal do the line editing
+    nocbreak();
+    echo();
+
+    // this reads from buffer after <ENTER>, not "raw" 
+    // so any backspacing etc. has already been taken care of
+    int ch = getch();
+
+    while ( ch != '\n' )
+    {
+        input.push_back( ch );
+        ch = getch();
+    }
+
+    // restore your cbreak / echo settings here
+
+    return input;
+}
+
+
 
 /** 
  * @brief main boi
@@ -294,6 +349,32 @@ int music(std::future<void> future)
  * 
  */
 int main(int argc, char* argv[]){
+
+
+
+    // check if command preprocessor exist
+    if(commandprocessorstatus())
+    {
+
+    }
+    else{
+        cout << RED "NO COMMAND PROCESSSOR??? BAD BOY. NO EXIST";
+        return EXIT_FAILURE;
+    }
+
+
+    /* initialize the (pd/n)curses */ initscr(); echo();
+
+    // check if color exist
+    if(has_colors() == true)
+    {
+        start_color();
+    }
+    else{
+        printw("YOU TERMINaL, NO COLOR == BAD");
+        endwin();
+        return EXIT_FAILURE;
+    }
 
     int zombiecount = 0;
     int tries = maxtries;
@@ -330,45 +411,60 @@ int main(int argc, char* argv[]){
         for (int i = 1; i < argc; ++i) {
             std::string arg = argv[i];
             int nexti = (i + 1);
-            if ((arg == "-h") || (arg == "--help")) {
+            if ((arg == "-h") || (arg == "--help") || (arg == "/H") || (arg == "/HLP")) {
+                endwin();
                 show_usage(argv[0]);
-                return 0;
+                return EXIT_SUCCESS;
             }
-            else if ((arg == "-ns") || (arg == "--NOSTAT"))
+            else if ((arg == "-ns") || (arg == "--NOSTAT") || (arg == "/NS"))
             {
                 showstat = false;
             }
-            else if((arg == "-fn") || (arg == "--FILENAME"))
+            else if((arg == "-fn") || (arg == "--FILENAME") || (arg == "/FN"))
             {
                 string clifilename = argv[nexti];
                 if(clifilename.empty())
                 {
-                    cout << RED "Filename expected after -fn or --FILENAME";
-                    return 1;
+                    endwin();
+                    cout << RED "Filename expected after -fn, --FILENAME or /FN";
+                    return EXIT_FAILURE;
                 }
                 else{
                     filename = clifilename;
                 }
             }
-            else if((arg == "-nm") || (arg == "--NOMUSIX") || (arg == "--NOMUSIC"))
+            else if((arg == "-nm") || (arg == "--NOMUSIX") || (arg == "--NOMUSIC") || (arg == "/NM"))
             {
                 hushmusic = true;
             }
-            else if((arg == "-nl") || (arg == "--NOLOG") || (arg == "--NOLOGGING"))
+            else if((arg == "-nl") || (arg == "--NOLOG") || (arg == "--NOLOGGING") || (arg == "/NL"))
             {
                 nolog = true;
             }
-            else if((arg == "-ln") || (arg == "--LOGNAME"))
+            else if((arg == "-ln") || (arg == "--LOGNAME") || (arg == "/LN"))
             {
                 string clilogname = argv[nexti];
                 if(clilogname.empty())
                 {
-                    cout << RED "Filename expected after -ln or --LOGNAME";
-                    return 1;
+                    endwin();
+                    cout << RED "Filename expected after -ln, --LOGNAME /LN";
+                    return EXIT_FAILURE;
                 }
                 else{
                     logname = clilogname;
                 }
+            }
+            else if((arg == "-cs") || (arg == "--CLEARSCREEN") || (arg == "--CLS") || (arg == "--CLEAR") || (arg == "/CS") || (arg == "/CLS") || (arg == "/CLEAR"))
+            {
+                wclear(stdscr);
+            }
+            else if((arg == "-ld") || (arg == "--DESKTOPLOG") || (arg == "/DL"))
+            {
+
+            }
+            else if((arg == "-fd") || (arg == "--DESKTOPFILE") || (arg == "/DF"))
+            {
+
             }
             else {
                 sources.push_back(argv[i]);
@@ -379,6 +475,13 @@ int main(int argc, char* argv[]){
     const char* constlogname = logname.c_str();
 
     thread musixThread(music, std::move(futura));
+    thread timeThread(durationtimer, std::move(futura2));
+
+    /* init color */ start_color();
+    /* bad color */ init_pair(1, COLOR_RED, COLOR_BLACK);
+    /* good color */ init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    /* boring color */ init_pair(3, COLOR_WHITE, COLOR_BLACK);
+
     if(nolog == false)
     {
         plog::init(plog::verbose, constlogname);
@@ -390,21 +493,19 @@ int main(int argc, char* argv[]){
         musixThread.join();
     }
 
-
-#ifdef _WIN32
-    system("color 02");
-#endif
-
-    cout << "\033]2;" << title << "\007" << GRN "Welcome to " << title << endl << "Press enter to get started. Type [EXIT or exit] to exit," << endl << "maybe do a keyboard interrupt anytime you want to also exit" << endl;
+    printw('\033]2;' + title.c_str() + '\007');
+    printw('Welcome to ' + title.c_str() + '\n' + 'Press enter to get started. Type [EXIT or exit] to exit,' + '\n' + 'maybe do a keyboard interrupt anytime you want to also exit' + '\n');
+    wrefresh(stdscr);
+    // setcolor("0A");
     string shouldiexit = "";
-    getline(cin, shouldiexit);
-    shouldiexit = *blank;
+    shouldiexit = getstring();
     if(shouldiexit == "exit" || shouldiexit == "EXIT"){
-        return 0;
+        return EXIT_SUCCESS;
     }
 
-    cout << "What is your name?" << endl;
-    getline(cin, name);
+    printw("What is your name?\n");
+    wrefresh(stdscr);
+    name = getstring();
     if(name.empty())
     {
         name = defname;
@@ -416,20 +517,20 @@ int main(int argc, char* argv[]){
     else if(name == compname)
     {
         name = defname;
-        cout << "This is you" << endl << endl << thisisyouimg << endl;
+        printw(("This is you\n\n" + thisisyouimg + "\n").c_str());
     }
 
     if(name == "Andry Lie" || name == "andry lie" || name == "Andry lie" || name == "andry Lie")
     {
         cheatmode = true;
-        cout << "Cheat mode activated" << endl;
+        printw("Cheat mode activated\n");
         PLOG_INFO << "cheater";
     }
 
-    cout<< "Ok " << name << ", How many zombies do you want to fight?" << endl;
+    printw(( "Ok " + name + ", How many zombies do you want to fight?\n" ).c_str());
 
     while(true){
-        cin >> buffer;
+        buffer = getstring();
         try{
             if (buffer == compname) {
                 throw ASRTBE;
@@ -446,47 +547,47 @@ int main(int argc, char* argv[]){
             break;
         }
         catch(invalid_argument eia){
-            cout << "Give me only numbers" << endl;
+            printw("Give me only numbers\n");
             BEL();
         }
         catch(AbigailSaphiroRuntimeThiccBreastException artbe){
             BEL();
-            cout << artbe.what();
+            printw(artbe.what());
             if(nolog == false)
             {
                 PLOG_FATAL << "Trololololo, you should never put that.";
             }
             throw ASRTBE;
-            return 1;
+            return EXIT_FAILURE;
         }
         catch(...){
 
         }
     }
-    cout << endl << "You fight by guessing numbers to train yourself and increase your skill!" << endl << "If you guess corectly and you killed the zombie, you win and get to live another day and fight again with another zombie!" << endl << "You lose and you are DED, no more fighting." << endl << "You lose by running out of tries in the guessing game or losing to a zombie with a higher skill level." << endl << "You win by killinng the zombie and you can increase the change if winning by guessing correctly with as little mistake as possible." << endl << "Your score and skill is multiplied depending on how much zombies you want to fight" << endl;
-    cin >> *blank;
+    printw("You fight by guessing numbers to train yourself and increase your skill!\nIf you guess corectly and you killed the zombie, you win and get to live another day and fight again with another zombie!\nYou lose and you are DED, no more fighting.\nYou lose by running out of tries in the guessing game or losing to a zombie with a higher skill level.\nYou win by killinng the zombie and you can increase the change if winning by guessing correctly with as little mistake as possible.\nYour score and skill is multiplied depending on how much zombies you want to fight\n");
+    *blank = getstring();
     BEL();
 
-    cout << "Fight Fight Fight " << name << "!" << endl << endl;
+    printw(strcat(strcat(string("Fight Fight Fight ").c_str(), name.c_str()), "!\n\n"));
     sleep_for(seconds(2));
     BEL();
 
     while(DED == 0)
     {
         mynumber = randint(min, max);
-        cout << "My number is between " << min << " and " << max << endl;
+        printw(strcat(strcat(strcat(strcat(string("My number is between ").c_str(), inttochar(min)), " and "),  inttochar(max)), "\n"));
         while(true)
         {
-            cout << "You have " << tries << " tries" << endl;
+            printw(strcat(string("You have ").c_str(),  strcat(inttochar(tries), " tries\n")));
             if (tries < 1)
             {
                 DED = 1;
                 break;
             }
             if (tries == 1) {
-                cout << "This is your last chance!" << endl;
+                printw("This is your last chance!\n");
             }
-            cin >> buffer;
+            buffer = getstring();
             try {
                 myguess = stoi(buffer);
                 if (tries < 1)
@@ -507,7 +608,7 @@ int main(int argc, char* argv[]){
                     }
                     if (myguess < mynumber)
                     {
-                        cout << "Too low." << endl;
+                        printw("Too low.\n");
                         BEL();
                         zskill += 1;
                         pskill -= 2;
@@ -519,7 +620,7 @@ int main(int argc, char* argv[]){
                     }
                     else if (myguess > mynumber)
                     {
-                        cout << "Too high." << endl;
+                        printw("Too high.\n");
                         BEL();
                         zskill += randint(1, 2);
                         pskill -= 1;
@@ -530,7 +631,7 @@ int main(int argc, char* argv[]){
                         }
                     }
                     else {
-                        cout << "Good." << endl;
+                        printw("Good.\n");
                         BEL();
                         pskill = pskill + (randint(1, 5) * (randint(2, 4) * 2));
                         zskill -= (randint(1, 5) * 2);
@@ -553,16 +654,16 @@ int main(int argc, char* argv[]){
                 throw ASRTBE;
             }
             catch(invalid_argument eia){
-                cout << "Give me only numbers" << endl;
+                printw("Give me only numbers\n");
                 BEL();
             }
             catch(exception e)
             {
-                cout << "exception." << endl;
+                printw("exception.\n");
             }
             catch(...)
             {
-                cout << "Exception dectected, input again" << endl;
+                printw("Exception dectected, input again\n");
             }
             if (tries < 1)
             {
@@ -576,69 +677,67 @@ int main(int argc, char* argv[]){
             break;
         }
 
-        cout << endl;
-
-        cout << pskill << "|" << zskill << endl;
+        printw("\n");
 
         if (zskill > 10) {
-            cout << endl << "Here comes some strong boy zombie!" << endl;
+            printw("\nHere comes some strong boy zombie!\n");
         }
         else if (zskill > 1) {
-            cout << endl << "Here comes some zombie!" << endl;
+            printw("\nHere comes some zombie!\n");
         }
         else if (zskill == 1)
         {
-            cout << endl << "You got some weak zombie!" << endl;
+            printw("\nYou got some weak zombie!\n");
         }
         else {
-            cout << endl << "What zombie?" << endl;
+            printw("\nYou got a Whatter zombie!\n");
         }
 
         BEL();
 
         sleep_for(seconds(2));
 
-        cout << endl;
+        printw("\n");
 
         int bonus = randint(1, 50);
         if(bonus == 1)
         {
-            cout << "You have a chance for bonus skill level, would you like it? 1 for yes, other for no" << endl;
+            printw("You have a chance for bonus skill level, would you like it? 1 for yes, other for no\n");
             try{
                 int answer = 0;
-                cin >> buffer;
+                buffer = getstring();
                 answer = stoi(buffer);
                 if(answer == 1)
                 {
                     int addition = randint(1, 5);
                     pskill += addition;
-                    cout << "You have " << addition << " levels added to your skill level, now your skill level is at " << pskill;
+                    printw(strcat(string("You have ").c_str(), strcat(inttochar(addition), strcat(string(" levels added to your skill level, now your skill level is at ").c_str(), pskill))));
                 }
                 else{
-                    cout << "alright, this is rare";
+                    printw("alright, this is rare\n");
                 }
             }
             catch(invalid_argument eia)
             {
-                cout << "alright, this is rare";
+                printw("alright, this is rare\n");
             }
             catch(exception e)
             {
-                cout << "alright, this is rare";
+                printw("alright, this is rare\n");
             }
             catch(...){
-                cout << "alright, this is rare";
+                printw("alright, this is rare\n");
             }
         }
 
-        cout << endl;
+        printw("\n");
 
         int zheartattack = randint(1, 45);
         if(zheartattack != 1)
         {
             for (int i = 0; i < 5; i++) {
                 string effect = attack[randint(0, (attacklen - 1))];
-                cout << "Fighting with " << effect << "..." << endl;
+                printw(strcat(string("Fighting with ").c_str(), strcat(effect.c_str(), "...\n")));
                 DET();
                 sleep_for(seconds(1));
             }
@@ -649,38 +748,38 @@ int main(int argc, char* argv[]){
             }
             else {
                 if ((pskill - zskill) > 7) {
-                    cout << "Zombie is wasted." << endl;
+                    printw("Zombie is wasted.\n");
                     BEL();
                     pskill++;
                     score++;
                     zombiekilled++;
                 }
                 else if ((pskill - zskill) > 5) {
-                    cout << "That must have hurt!" << endl;
+                    printw("That must have hurt!\n");
                     BEL();
                     pskill += 2;
                     score += 2;
                     zombiekilled++;
                 }
                 else if ((pskill - zskill) > 0) {
-                    cout << "You killed the zombie!" << endl;
+                    printw("You killed the zombie!\n");
                     BEL();
                     pskill = pskill * zombiecount;
                     score = score * zombiecount;
                     zombiekilled++;
                 }
                 else if(cheatmode == false && (pskill - zskill) > 0) {
-                    cout << "You killed the zombie, but suffered injuries, no skill level for you then." << endl;
+                    printw("You killed the zombie, but suffered injuries, no skill level for you then. So sad.\n");
                     BEL();
                 }
                 else{
-                    cout << "You killed the zombie, What. No skill level for you then." << endl;
+                    printw("You killed the zombie, What. No skill level for you then.\n");
                     BEL();
                 }
             }
         }
         else{
-            cout << "The zombie just died of a sudden heart attack, stealing your skill level." << endl;
+            printw("The zombie just died of a sudden heart attack, stealing your skill level.\n");
         }
 
 
@@ -690,14 +789,14 @@ int main(int argc, char* argv[]){
             break;
         }
 
-        cout << endl << "You went home, " << name << ", but do you want to fight again, or end it." << endl;
+        printw(strcat(string("\nYou went home, ").c_str(), strcat(name.c_str(), string(", but do you want to fight again, or end it.\n").c_str())));
 
         while (true)
         {
-            cout << "Here is your stats so far,  score: " << score << ", zombie army killed : " << zombiekilled << ", zombie count: " << zombiecount << "." << endl;
-            cout << "end for ending the game. " << endl;
-            cout << "fight for fighting again. " << endl;
-            cin >> choice;
+            printw(strcat(string("Here is your stats so far,  score: ").c_str(), strcat(inttochar(score) , strcat(string(", zombie army killed : ").c_str(), strcat(inttochar(zombiekilled), strcat(string(", zombie count: ").c_str(), strcat(inttochar(zombiecount), ".\n")))))));
+            printw("end for ending the game. \n");
+            printw("fight for fighting again. \n");
+            choice = getstring();
             if (choice == "end")
             {
                 quit = true;
@@ -716,25 +815,10 @@ int main(int argc, char* argv[]){
                 break;
             }
             else {
-                cout << "Say what?" << endl;
+                printw("Say what?\n");
                 BEL();
             }
 
-        }
-
-
-        int plane = randint(1, 3);
-        if(plane == 1)
-        {
-            cout << "At this moment, an airplane full of bricks always fly by your path. " << endl;
-            int bricked = randint(1, 100);
-            {
-                if(bricked < 3)
-                {   
-                    cout << "One of the bricks fall out and hit your hed, you are DED as a doornail" << endl;
-                    DED = 3;
-                }
-            }
         }
 
         if (DED != 0)
@@ -744,50 +828,68 @@ int main(int argc, char* argv[]){
 
         if (quit == true)
         {
-            cout << endl;
+            printw("\n");
             break;
+        }
+
+        int plane = randint(1, 3);
+        if(plane == 1)
+        {
+            printw("At this moment, an airplane full of bricks always fly by your path. \n\n");
+            int bricked = randint(1, 100);
+            {
+                if(bricked < 3)
+                {   
+                    printw("One of the bricks fall out and hit your hed, you are DED as a doornail.\n");
+                    DED = 3;
+                }
+            }
         }
     }
 
     // transplant and modified
     if (DED == 0)
     {
-        cout << endl << "You survived, " << name << "! ";
+        printw(strcat(string("\nYou survived, ").c_str(), strcat(name.c_str(), "! ")));
         BEL();
     }
     else if (DED == 1) {
-        cout << endl << name << ", you R DED from the guessing part. ";
+        printw(strcat(string("\n").c_str(), strcat(name.c_str(), ", you R DED from the guessing part. ")));
         DET();
     }
     else if (DED == 2)
     {
-        cout << endl << name << ", you R DED from the zombies. ";
+        printw(strcat(string("\n").c_str(), strcat(name.c_str(), ", you R DED from the zombies. ")));
         DET();
     }
     else if (DED == 3)
     {
-        cout << endl << name << ", you are DED as a doornail because the brick that fell out of a cargo plane hit your head.";
+        printw(strcat(string("\n").c_str(), strcat(name.c_str(), ", you are DED as a doornail because the brick that fell out of a cargo plane hit your head.")));
     }
 
-    cin >> *blank;
+    signal_exit_time_thread.set_value();
+    timeThread.join();
+    *blank = getstring();
     BEL();
 
     // transplanted code
-    cout << endl << "Final Stats played at " << whatisthetimeanddate() << endl;
-    cout << "Player Name:" << name << endl;
-    cout << "Final score: " << score << endl;
-    cout << "Final amout of zombies killed: " << zombiekilled << endl;
-    cout << "Final skill level: " << pskill << endl;
-    cout << "Final zombie count: " << zombiecount << endl;
-    cin >> *blank;
+    printw(strcat(string("\nFinal Stats played at ").c_str(), strcat(whatisthetimeanddate().c_str(), string("\n").c_str())));
+    printw(strcat(string("Player Name:").c_str(), strcat(name.c_str(), string("\n").c_str())));
+    printw(strcat(string("Final score: ").c_str(), strcat(inttochar(score), string("\n").c_str())));
+    printw(strcat(string("Final amout of zombies killed: ").c_str(), strcat(inttochar(zombiekilled), string("\n").c_str())));
+    printw(strcat(string("Final skill level: ").c_str(), strcat(inttochar(pskill), string("\n").c_str())));
+    printw(strcat(string("Final zombie count: ").c_str(), strcat(inttochar(zombiecount), string("\n").c_str())));
+    printw(strcat(string("Duration for playing in seconds: ").c_str(), strcat(inttochar(zeconds), string("\n").c_str())));
+    *blank = getstring();
     BEL();
 
     if(hushmusic == false)
     {
         signal_exit_musix_thread.set_value(); //set value into promise
     }
+
     musixThread.join();
-    cout << endl;
+    printw("\n");
 
     while (true)
     {
@@ -797,8 +899,8 @@ int main(int argc, char* argv[]){
         }
         string confirm = "";
 
-        cout << "Would you like your Final Stats be written to a file?" << endl << "Yes for writing, No for not writting. " << endl;
-        cin >> confirm;
+        printw("Would you like your Final Stats be written to a file?\nYes for writing, No for not writting. \n");
+        confirm = getstring();
 
         if (confirm == "yes")
         {
@@ -806,28 +908,28 @@ int main(int argc, char* argv[]){
 
             if (ifile)
             {
-                cout << endl << "Are you sure, you want to do this, the same file, " << filename << " already exist, This action will overwrite the file.  Yes for confirm overwritting, No or other for cancel" << endl;
+                printw(strcat(string("\nAre you sure, you want to do this, the same file, ").c_str(), strcat(filename.c_str(), string(" already exist, This action will overwrite the file.  Yes for confirm overwritting, No or other for cancel\n").c_str())));
                 string res = "";
-                cin >> res;
+                res = getstring();
                 if (res == "yes")
                 {
 
                 }
                 else {
-                    cout << "OK then" << endl;
+                    printw("OK then\n");
                     break;
                 }
             }
             else {
-                cout << endl << "Seems safe, I don't see any file named " << filename << ", But do you want to stay safe than sorry? Yes for sorry, but proud, or (either you choose no or other) for the safe." << endl;
+                printw(strcat(string("\nSeems safe, I don't see any file named ").c_str(), strcat(filename.c_str(), string(", But do you want to stay safe than sorry? Yes for sorry, but proud, or (either you choose no or other) for the safe. \n").c_str())));
                 string res = "";
-                cin >> res;
+                res = getstring();
                 if (res == "yes")
                 {
 
                 }
                 else {
-                    cout << "OK then" << endl;
+                    printw("OK then\n");
                     break;
                 }
             }
@@ -839,7 +941,7 @@ int main(int argc, char* argv[]){
             FinalFile.open(filename, std::ofstream::out | std::ofstream::trunc);
             string endstatus = "";
 
-            cout << endl << GRN "Writting to file, please don't close the game." << endl;
+            printw("\nWritting to file, please don't close the game.\n");
 
             if(DED == 3)
             {
@@ -883,8 +985,9 @@ int main(int argc, char* argv[]){
             FinalFile << "Final skill level of player: " << pskill << endl;
             FinalFile << "Final skill level of zombie: " << zskill << endl;
             FinalFile << "Final zombie count: " << zombiecount << endl;
+            FinalFile << "Duration for playing in seconds: " << zeconds << endl;
 
-            cout << GRN "File writting is done";
+            printw("File writting is done");
 
 
             FinalFile.close();
@@ -892,23 +995,23 @@ int main(int argc, char* argv[]){
         }
         else if (confirm == "no")
         {
-            cout << endl << "No file writting is done";
+            printw("\nNo file writting is done\n");
             break;
         }
         else {
-            cout << endl << "Say what?" << endl;
+            printw("\nSay what?\n");
         }
 
 
     }
-
-
-    cout << endl << GRN "You can safely exit the game. ";
-    BEL();
-    cin >> *blank;
-    BEL();
     delete blank;
     BEL();
+    printw("\nYou can safely exit the game. \n");
+    BEL();
+    pausecli();
+    BEL();
 
-    return 0;
+    endwin();
+
+    return EXIT_SUCCESS;
 }

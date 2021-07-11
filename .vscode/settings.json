@@ -119,6 +119,14 @@
         "ranges": "cpp",
         "shared_mutex": "cpp",
         "cfenv": "cpp",
-        "cinttypes": "cpp"
-    }
+        "cinttypes": "cpp",
+        "csetjmp": "cpp",
+        "regex": "cpp",
+        "source_location": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "scoped_allocator": "cpp",
+        "*.inc": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

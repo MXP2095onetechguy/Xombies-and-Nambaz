@@ -1,6 +1,0 @@
-CXXFLAGS = -fdiagnostics-color -static -Wall -g -static-libgcc -static-libstdc++ -O2
-# LDFLAGS =
-# this lists the binaries to produce, the (non-PHONY, binary) targets in
-# the previous manual Makefile
-bin_PROGRAMS = Gam.exe
-Xombies-and-Nambaz_SOURCES = ./Gam.cpp

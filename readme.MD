@@ -23,7 +23,7 @@ This game was originally a mix of two games and then compiled with msvc, but I d
 <hr>
 How to build and make documentation
 <hr>
-code dependency: [Boost](https://www.boost.org/)
+code dependency: [Boost](https://www.boost.org/), Pdcurses or Ncurses {whatever}, boehm garbage collector
 build dependency: make, g++, windres(only if you compile for winows with icon), automake, autoconf, autoscan {You need [msys2](https://www.msys2.org/) for these on windows}
 
 document dependency: make and doxygen to build a new documentation
@@ -83,3 +83,6 @@ Build docs, use
 make doc
 ```
 and make sure that doxygen is used
+
+
+*warning, code may not be readable due to pdcurses and string
